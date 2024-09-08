@@ -11,6 +11,8 @@ public struct AppleMapsClient: Sendable {
     private let httpClient: HTTPClient
     private let accessToken: String
 
+    private let decoder = JSONDecoder()
+
     public init(httpClient: HTTPClient, teamID: String, keyID: String, key: String) async throws {
         self.httpClient = httpClient
         self.accessToken = try await Self.getAccessToken(
@@ -59,7 +61,7 @@ public struct AppleMapsClient: Sendable {
         print(url)
 
         let data = try await self.httpGet(url: url)
-        return try JSONDecoder().decode(PlaceResults.self, from: data).results ?? []
+        return try decoder.decode(PlaceResults.self, from: data).results ?? []
     }
 
     /// Makes a reverse geocoding request.
@@ -79,7 +81,87 @@ public struct AppleMapsClient: Sendable {
         url.append(queryItems: queries)
 
         let data = try await self.httpGet(url: url)
-        return try JSONDecoder().decode(PlaceResults.self, from: data).results ?? []
+        return try decoder.decode(PlaceResults.self, from: data).results ?? []
+    }
+
+    /// Makes a directions request.
+    /// - Parameters:
+    ///   - origin: The starting location as an address, or coordinates you specify as latitude, longitude.
+    ///   - destination: The destination as an address, or coordinates you specify as latitude, longitude.
+    ///   - arrivalDate: The date and time to arrive at the destination.
+    ///   - avoid: A list of the features to avoid when calculating direction routes.
+    ///   - departureDate: The date and time to depart from the origin.
+    ///   - lang: The language the server uses when returning the response, specified using a BCP 47 language code.
+    ///   - requestsAlternateRoutes: When you set this to `true`, the server returns additional routes, when available.
+    ///   - searchLocation: A `searchLocation` the app defines as a hint for the query input for `origin` or `destination`.
+    ///   - searchRegion: A region the app defines as a hint for the query input for `origin` or `destination`. 
+    ///   - transportType: The mode of transportation the server returns directions for.
+    ///   - userLocation: The location of the user.
+    ///
+    /// - Returns: Returns a ``DirectionsResponse`` result that describes the steps and routes from the origin to the destination.
+    public func directions(
+        origin: String,
+        destination: String,
+        arrivalDate: Date? = nil,
+        avoid: [String]? = nil,
+        departureDate: Date? = nil,
+        lang: String? = nil,
+        requestsAlternateRoutes: Bool? = nil,
+        searchLocation: (latitude: Double, longitude: Double)? = nil,
+        searchRegion: (northLatitude: Double, eastLongitude: Double, southLatitude: Double, westLongitude: Double)? = nil,
+        transportType: TransportType? = nil,
+        userLocation: (latitude: Double, longitude: Double)? = nil
+    ) async throws -> DirectionsResponse {
+        var url = URL(string: "\(Self.apiServer)/v1/directions")!
+        var queries: [URLQueryItem] = [
+            URLQueryItem(name: "origin", value: origin),
+            URLQueryItem(name: "destination", value: destination)
+        ]
+        if let arrivalDate {
+            queries.append(URLQueryItem(name: "arrivalDate", value: arrivalDate.formatted(.iso8601
+                .year()
+                .month()
+                .day()
+                .timeZone(separator: .omitted)
+                .time(includingFractionalSeconds: true)
+                .timeSeparator(.colon)
+            )))
+        }
+        if let avoid {
+            queries.append(URLQueryItem(name: "avoid", value: avoid.joined(separator: ",")))
+        }
+        if let departureDate {
+            queries.append(URLQueryItem(name: "departureDate", value: departureDate.formatted(.iso8601
+                .year()
+                .month()
+                .day()
+                .timeZone(separator: .omitted)
+                .time(includingFractionalSeconds: true)
+                .timeSeparator(.colon)
+            )))
+        }
+        if let lang {
+            queries.append(URLQueryItem(name: "lang", value: lang))
+        }
+        if let requestsAlternateRoutes {
+            queries.append(URLQueryItem(name: "requestsAlternateRoutes", value: "\(requestsAlternateRoutes)"))
+        }
+        if let searchLocation {
+            queries.append(URLQueryItem(name: "searchLocation", value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
+        }
+        if let searchRegion {
+            queries.append(URLQueryItem(name: "searchRegion", value: "\(searchRegion.northLatitude),\(searchRegion.eastLongitude),\(searchRegion.southLatitude),\(searchRegion.westLongitude)"))
+        }
+        if let transportType {
+            queries.append(URLQueryItem(name: "transportType", value: transportType.rawValue))
+        }
+        if let userLocation {
+            queries.append(URLQueryItem(name: "userLocation", value: "\(userLocation.latitude),\(userLocation.longitude)"))
+        }
+        url.append(queryItems: queries)
+
+        let data = try await self.httpGet(url: url)
+        return try decoder.decode(DirectionsResponse.self, from: data)
     }
 
     /// Makes an HTTP GET request.
@@ -101,7 +183,7 @@ public struct AppleMapsClient: Sendable {
         if response.status == .ok {
             return try await response.body.collect(upTo: 1024 * 1024)
         } else {
-            throw try await JSONDecoder().decode(ErrorResponse.self, from: response.body.collect(upTo: 1024 * 1024))
+            throw try await decoder.decode(ErrorResponse.self, from: response.body.collect(upTo: 1024 * 1024))
         }
     }
 }
