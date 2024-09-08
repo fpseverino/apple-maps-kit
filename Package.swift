@@ -1,23 +1,42 @@
 // swift-tools-version: 5.10
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-
 import PackageDescription
 
 let package = Package(
     name: "apple-maps-kit",
+    platforms: [
+        .macOS(.v14),
+    ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
-            name: "apple-maps-kit",
-            targets: ["apple-maps-kit"]),
+        .library(name: "AppleMapsKit", targets: ["AppleMapsKit"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.22.0"),
+        .package(url: "https://github.com/vapor/jwt-kit.git", from: "5.0.0-rc.2"),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "apple-maps-kit"),
+            name: "AppleMapsKit",
+            dependencies: [
+                .product(name: "AsyncHTTPClient", package: "async-http-client"),
+                .product(name: "JWTKit", package: "jwt-kit"),
+            ],
+            swiftSettings: swiftSettings
+        ),
         .testTarget(
-            name: "apple-maps-kitTests",
-            dependencies: ["apple-maps-kit"]),
+            name: "AppleMapsKitTests",
+            dependencies: [
+                .target(name: "AppleMapsKit"),
+            ],
+            swiftSettings: swiftSettings
+        ),
     ]
 )
+
+var swiftSettings: [SwiftSetting] { [
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("ConciseMagicFile"),
+    .enableUpcomingFeature("ForwardTrailingClosures"),
+    .enableUpcomingFeature("DisableOutwardActorInference"),
+    .enableUpcomingFeature("StrictConcurrency"),
+    .enableExperimentalFeature("StrictConcurrency=complete"),
+] }
