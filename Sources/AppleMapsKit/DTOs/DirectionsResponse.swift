@@ -24,9 +24,15 @@ public struct DirectionsResponse: Decodable, Sendable {
     public let steps: [Step]?
 }
 
-public enum TransportType: String, Codable, Sendable {
+public enum DirectionsTransportType: String, Decodable, Sendable {
     case automobile = "Automobile"
     case walking = "Walking"
+}
+
+/// A list of the features you can request to avoid when calculating directions.
+public enum DirectionsAvoid: String, Decodable, Sendable {
+    /// When you set `avoid=Tolls`, routes without tolls are higher up in the list of returned routes.
+    case tolls = "Tolls"
 }
 
 extension DirectionsResponse {
@@ -60,8 +66,8 @@ extension DirectionsResponse {
 
         /// A string that represents the mode of transportation the service used to estimate the arrival time.
         /// 
-        /// Same as the input query param `transportType` or ``TransportType/-enum.automobile`` if the input query didn’t specify a transportation type.
-        public let transportType: TransportType?
+        /// Same as the input query param `transportType` or ``DirectionsTransportType/automobile`` if the input query didn’t specify a transportation type.
+        public let transportType: DirectionsTransportType?
     }
 
     /// An object that represents a step along a route.
@@ -87,6 +93,6 @@ extension DirectionsResponse {
         public let stepPathIndex: Int?
 
         /// A string indicating the transport type for this step if it’s different from the `transportType` in the route.
-        public let transportType: TransportType?
+        public let transportType: DirectionsTransportType?
     }
 }

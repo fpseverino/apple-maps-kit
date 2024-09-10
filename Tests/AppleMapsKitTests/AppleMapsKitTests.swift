@@ -48,10 +48,10 @@ final class AppleMapsKitTests: XCTestCase {
 
     func testDirections() async throws {
         let locationArrivalDirections = try await client.directions(
-            origin: "37.7857,-122.4011",
-            destination: "San Francisco City Hall, CA",
+            from: "37.7857,-122.4011",
+            to: "San Francisco City Hall, CA",
             arrivalDate: Date(timeIntervalSinceNow: 3600),
-            avoid: ["Tolls"],
+            avoid: [.tolls],
             lang: "en-US",
             requestsAlternateRoutes: true,
             searchLocation: (latitude: 37.7857, longitude: -122.4011),
@@ -61,10 +61,10 @@ final class AppleMapsKitTests: XCTestCase {
         XCTAssertFalse(locationArrivalDirections.routes!.isEmpty)
 
         let regionArrivalDirections = try await client.directions(
-            origin: "37.7857,-122.4011",
-            destination: "San Francisco City Hall, CA",
+            from: "37.7857,-122.4011",
+            to: "San Francisco City Hall, CA",
             arrivalDate: Date(timeIntervalSinceNow: 3600),
-            avoid: ["Tolls"],
+            avoid: [.tolls],
             lang: "en-US",
             requestsAlternateRoutes: true,
             searchRegion: (northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5),
@@ -74,9 +74,9 @@ final class AppleMapsKitTests: XCTestCase {
         XCTAssertFalse(regionArrivalDirections.routes!.isEmpty)
 
         let locationDepartureDirections = try await client.directions(
-            origin: "37.7857,-122.4011",
-            destination: "San Francisco City Hall, CA",
-            avoid: ["Tolls"],
+            from: "37.7857,-122.4011",
+            to: "San Francisco City Hall, CA",
+            avoid: [.tolls],
             departureDate: Date(timeIntervalSinceNow: 3600),
             lang: "en-US",
             requestsAlternateRoutes: true,
@@ -87,9 +87,9 @@ final class AppleMapsKitTests: XCTestCase {
         XCTAssertFalse(locationDepartureDirections.routes!.isEmpty)
 
         let regionDepartureDirections = try await client.directions(
-            origin: "37.7857,-122.4011",
-            destination: "San Francisco City Hall, CA",
-            avoid: ["Tolls"],
+            from: "37.7857,-122.4011",
+            to: "San Francisco City Hall, CA",
+            avoid: [.tolls],
             departureDate: Date(timeIntervalSinceNow: 3600),
             lang: "en-US",
             requestsAlternateRoutes: true,
@@ -98,5 +98,47 @@ final class AppleMapsKitTests: XCTestCase {
             userLocation: (latitude: 37.78, longitude: -122.42)
         )
         XCTAssertFalse(regionDepartureDirections.routes!.isEmpty)
+    }
+
+    func testEta() async throws {
+        let departureEtas = try await client.eta(
+            from: (latitude: 37.331423, longitude: -122.030503),
+            to: [
+                (latitude: 37.32556561130194, longitude: -121.94635203581443),
+                (latitude: 37.44176585512703, longitude: -122.17259315798667)
+            ],
+            transportType: .transit,
+            departureDate: Date(timeIntervalSinceNow: 3600)
+        )
+        XCTAssertFalse(departureEtas.etas!.isEmpty)
+
+        let arrivalEtas = try await client.eta(
+            from: (latitude: 37.331423, longitude: -122.030503),
+            to: [
+                (latitude: 37.32556561130194, longitude: -121.94635203581443),
+                (latitude: 37.44176585512703, longitude: -122.17259315798667)
+            ],
+            transportType: .transit,
+            arrivalDate: Date(timeIntervalSinceNow: 3600)
+        )
+        XCTAssertFalse(arrivalEtas.etas!.isEmpty)
+    }
+
+    func testEtaBetweenAddresses() async throws {
+        let departureEtas = try await client.etaBetweenAddresses(
+            from: "San Francisco City Hall, CA",
+            to: ["Golden Gate Park, San Francisco"],
+            transportType: .transit,
+            departureDate: Date(timeIntervalSinceNow: 3600)
+        )
+        XCTAssertFalse(departureEtas.etas!.isEmpty)
+
+        let arrivalEtas = try await client.etaBetweenAddresses(
+            from: "San Francisco City Hall, CA",
+            to: ["Golden Gate Park, San Francisco"],
+            transportType: .transit,
+            arrivalDate: Date(timeIntervalSinceNow: 3600)
+        )
+        XCTAssertFalse(arrivalEtas.etas!.isEmpty)
     }
 }
