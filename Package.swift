@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 import PackageDescription
 
 let package = Package(
@@ -19,24 +19,13 @@ let package = Package(
             dependencies: [
                 .product(name: "AsyncHTTPClient", package: "async-http-client"),
                 .product(name: "JWTKit", package: "jwt-kit"),
-            ],
-            swiftSettings: swiftSettings
+            ]
         ),
         .testTarget(
             name: "AppleMapsKitTests",
             dependencies: [
                 .target(name: "AppleMapsKit"),
-            ],
-            swiftSettings: swiftSettings
+            ]
         ),
     ]
 )
-
-var swiftSettings: [SwiftSetting] { [
-    .enableUpcomingFeature("ExistentialAny"),
-    .enableUpcomingFeature("ConciseMagicFile"),
-    .enableUpcomingFeature("ForwardTrailingClosures"),
-    .enableUpcomingFeature("DisableOutwardActorInference"),
-    .enableUpcomingFeature("StrictConcurrency"),
-    .enableExperimentalFeature("StrictConcurrency=complete"),
-] }
