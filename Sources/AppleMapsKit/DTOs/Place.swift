@@ -29,21 +29,9 @@ public struct Place: Decodable, Sendable {
 
     /// An opaque string that identifies a place.
     public let id: String?
-}
 
-/// An object that describes a map region in terms of its upper-right and lower-left corners as a pair of geographic points.
-public struct MapRegion: Decodable, Sendable {
-    /// A double value that describes the east longitude of the map region.
-    public let eastLongitude: Double?
-
-    /// A double value that describes the north latitude of the map region.
-    public let northLatitude: Double?
-
-    /// A double value that describes the south latitude of the map region.
-    public let southLatitude: Double?
-
-    /// A double value that describes the west longitude of the map region.
-    public let westLongitude: Double?
+    /// A string that describes a specific place of interest (POI) category.
+    public let poiCategory: PoiCategory?
 }
 
 /// An object that describes a location in terms of its longitude and latitude.

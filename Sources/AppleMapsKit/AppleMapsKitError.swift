@@ -3,6 +3,7 @@ public struct AppleMapsKitError: Error, Sendable {
     public struct ErrorType: Sendable, Hashable, CustomStringConvertible {
         enum Base: String, Sendable {
             case noPlacesFound
+            case invalidSearchResultType
         }
 
         let base: Base
@@ -12,6 +13,7 @@ public struct AppleMapsKitError: Error, Sendable {
         }
 
         public static let noPlacesFound = Self(.noPlacesFound)
+        public static let invalidSearchResultType = Self(.invalidSearchResultType)
 
         public var description: String {
             base.rawValue
@@ -39,6 +41,7 @@ public struct AppleMapsKitError: Error, Sendable {
     }
 
     public static let noPlacesFound = Self(errorType: .noPlacesFound)
+    public static let invalidSearchResultType = Self(errorType: .invalidSearchResultType)
 }
 
 extension AppleMapsKitError: CustomStringConvertible {

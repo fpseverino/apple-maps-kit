@@ -30,7 +30,7 @@ public enum DirectionsTransportType: String, Decodable, Sendable {
 }
 
 /// A list of the features you can request to avoid when calculating directions.
-public enum DirectionsAvoid: String, Decodable, Sendable {
+public enum DirectionsAvoid: String, Sendable {
     /// When you set `avoid=Tolls`, routes without tolls are higher up in the list of returned routes.
     case tolls = "Tolls"
 }

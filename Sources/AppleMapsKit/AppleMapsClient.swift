@@ -32,7 +32,7 @@ public struct AppleMapsClient: Sendable {
         )
     }
 
-    /// Makes a geocoding request.
+    /// Returns the latitude and longitude of the address you specify.
     /// 
     /// > Note: You can't specify both `searchLocation` and `searchRegion` in the same request.
     /// 
@@ -50,7 +50,7 @@ public struct AppleMapsClient: Sendable {
         limitToCountries: [String]? = nil,
         lang: String? = nil,
         searchLocation: (latitude: Double, longitude: Double)? = nil,
-        searchRegion: (northLatitude: Double, eastLongitude: Double, southLatitude: Double, westLongitude: Double)? = nil,
+        searchRegion: MapRegion? = nil,
         userLocation: (latitude: Double, longitude: Double)? = nil
     ) async throws -> [Place] {
         var url = URL(string: "\(Self.apiServer)/v1/geocode")!
@@ -64,19 +64,17 @@ public struct AppleMapsClient: Sendable {
         if let searchLocation {
             queries.append(URLQueryItem(name: "searchLocation", value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
         }
-        if let searchRegion {
-            queries.append(URLQueryItem(name: "searchRegion", value: "\(searchRegion.northLatitude),\(searchRegion.eastLongitude),\(searchRegion.southLatitude),\(searchRegion.westLongitude)"))
+        if let searchRegion, let searchRegionString = searchRegion.toString {
+            queries.append(URLQueryItem(name: "searchRegion", value: searchRegionString))
         }
         if let userLocation {
             queries.append(URLQueryItem(name: "userLocation", value: "\(userLocation.latitude),\(userLocation.longitude)"))
         }
         url.append(queryItems: queries)
-
-        let data = try await self.httpGet(url: url)
-        return try decoder.decode(PlaceResults.self, from: data).results ?? []
+        return try await decoder.decode(PlaceResults.self, from: httpGet(url: url)).results ?? []
     }
 
-    /// Makes a reverse geocoding request.
+    /// Returns an array of addresses present at the coordinates you provide.
     /// 
     /// - Parameters:
     ///   - latitude: Latitude value for the coordinate.
@@ -91,12 +89,170 @@ public struct AppleMapsClient: Sendable {
             queries.append(URLQueryItem(name: "lang", value: lang))
         }
         url.append(queryItems: queries)
-
-        let data = try await self.httpGet(url: url)
-        return try decoder.decode(PlaceResults.self, from: data).results ?? []
+        return try await decoder.decode(PlaceResults.self, from: httpGet(url: url)).results ?? []
     }
 
-    /// Makes a directions request.
+    /// Find places by name or by specific search criteria.
+    /// 
+    /// > Note: You can't specify both `searchLocation` and `searchRegion` in the same request.
+    /// 
+    /// - Parameters:
+    ///   - place: The place to search for. For example, `eiffel tower`.
+    ///   - excludePoiCategories: A list of the points of interest to exclude from the search results.
+    ///   - includePoiCategories: A list of the points of interest to include in the search results.
+    ///   - limitToCountries: A list of two-letter ISO 3166-1 codes of the countries to limit the results to.
+    ///   - resultTypeFilter: A list of strings that describes the kind of result types to include in the response.
+    ///   - lang: The language the server should use when returning the response, specified using a BCP 47 language code.
+    ///   - searchLocation: A location defined by the application as a hint.
+    ///   - searchRegion: A region the app defines as a hint.
+    ///   - userLocation: The location of the user.
+    ///   - searchRegionPriority: A value that indicates the importance of the configured region.
+    ///   - enablePagination: A value that tells the server that we expect paginated results.
+    ///   - pageToken: A value that indicates which page of results to return.
+    ///   - includeAddressCategories: A list of strings that describes the addresses to include in the search results.
+    ///   - excludeAddressCategories: A list of strings that describes the addresses to exclude in the search results.
+    /// 
+    /// - Returns: Returns a ``MapRegion`` that describes a region that encloses the results, and an array of ``SearchResponse`` objects that describes the results of the search.
+    public func search(
+        for place: String,
+        excludePoiCategories: [PoiCategory]? = nil,
+        includePoiCategories: [PoiCategory]? = nil,
+        limitToCountries: [String]? = nil,
+        resultTypeFilter: [SearchResultType]? = nil,
+        lang: String? = nil,
+        searchLocation: (latitude: Double, longitude: Double)? = nil,
+        searchRegion: MapRegion? = nil,
+        userLocation: (latitude: Double, longitude: Double)? = nil,
+        searchRegionPriority: SearchRegionPriority? = nil,
+        enablePagination: Bool? = nil,
+        pageToken: String? = nil,
+        includeAddressCategories: [AddressCategory]? = nil,
+        excludeAddressCategories: [AddressCategory]? = nil
+    ) async throws -> SearchResponse {
+        var url = URL(string: "\(Self.apiServer)/v1/search")!
+        var queries: [URLQueryItem] = [URLQueryItem(name: "q", value: place)]
+        if let excludePoiCategories {
+            queries.append(URLQueryItem(name: "excludePoiCategories", value: excludePoiCategories.map { $0.rawValue }.joined(separator: ",")))
+        }
+        if let includePoiCategories {
+            queries.append(URLQueryItem(name: "includePoiCategories", value: includePoiCategories.map { $0.rawValue }.joined(separator: ",")))
+        }
+        if let limitToCountries {
+            queries.append(URLQueryItem(name: "limitToCountries", value: limitToCountries.joined(separator: ",")))
+        }
+        if let resultTypeFilter {
+            try queries.append(URLQueryItem(name: "resultTypeFilter", value: resultTypeFilter.map {
+                guard $0 != .query else {
+                    throw AppleMapsKitError.invalidSearchResultType
+                }
+                return $0.rawValue
+            }
+            .joined(separator: ",")))
+        }
+        if let lang {
+            queries.append(URLQueryItem(name: "lang", value: lang))
+        }
+        if let searchLocation {
+            queries.append(URLQueryItem(name: "searchLocation", value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
+        }
+        if let searchRegion, let searchRegionString = searchRegion.toString {
+            queries.append(URLQueryItem(name: "searchRegion", value: searchRegionString))
+        }
+        if let userLocation {
+            queries.append(URLQueryItem(name: "userLocation", value: "\(userLocation.latitude),\(userLocation.longitude)"))
+        }
+        if let searchRegionPriority {
+            queries.append(URLQueryItem(name: "searchRegionPriority", value: searchRegionPriority.rawValue))
+        }
+        if let enablePagination {
+            queries.append(URLQueryItem(name: "enablePagination", value: "\(enablePagination)"))
+        }
+        if let pageToken {
+            queries.append(URLQueryItem(name: "pageToken", value: pageToken))
+        }
+        if let includeAddressCategories {
+            queries.append(URLQueryItem(name: "includeAddressCategories", value: includeAddressCategories.map { $0.rawValue }.joined(separator: ",")))
+        }
+        if let excludeAddressCategories {
+            queries.append(URLQueryItem(name: "excludeAddressCategories", value: excludeAddressCategories.map { $0.rawValue }.joined(separator: ",")))
+        }
+        url.append(queryItems: queries)
+        return try await decoder.decode(SearchResponse.self, from: httpGet(url: url))
+    }
+
+    /// Find results that you can use to autocomplete searches.
+    /// 
+    /// > Note: You can't specify both `searchLocation` and `searchRegion` in the same request.
+    /// 
+    /// - Parameters:
+    ///   - place: The place to search for. For example, `eiffel`.
+    ///   - excludePoiCategories: A list of the points of interest to exclude from the search results.
+    ///   - includePoiCategories: A list of the points of interest to include in the search results.
+    ///   - limitToCountries: A list of two-letter ISO 3166-1 codes of the countries to limit the results to.
+    ///   - resultTypeFilter: A list of strings that describes the kind of result types to include in the response.
+    ///   - lang: The language the server should use when returning the response, specified using a BCP 47 language code.
+    ///   - searchLocation: A location defined by the application as a hint.
+    ///   - searchRegion: A region the app defines as a hint.
+    ///   - userLocation: The location of the user.
+    ///   - searchRegionPriority: A value that indicates the importance of the configured region.
+    ///   - includeAddressCategories: A list of strings that describes the addresses to include in the search results.
+    ///   - excludeAddressCategories: A list of strings that describes the addresses to exclude in the search results.
+    /// 
+    /// - Returns: Returns a list of ``AutocompleteResult``.
+    public func searchAutoComplete(
+        for place: String,
+        excludePoiCategories: [PoiCategory]? = nil,
+        includePoiCategories: [PoiCategory]? = nil,
+        limitToCountries: [String]? = nil,
+        resultTypeFilter: [SearchResultType]? = nil,
+        lang: String? = nil,
+        searchLocation: (latitude: Double, longitude: Double)? = nil,
+        searchRegion: MapRegion? = nil,
+        userLocation: (latitude: Double, longitude: Double)? = nil,
+        searchRegionPriority: SearchRegionPriority? = nil,
+        includeAddressCategories: [AddressCategory]? = nil,
+        excludeAddressCategories: [AddressCategory]? = nil
+    ) async throws -> [AutocompleteResult] {
+        var url = URL(string: "\(Self.apiServer)/v1/searchAutocomplete")!
+        var queries: [URLQueryItem] = [URLQueryItem(name: "q", value: place)]
+        if let excludePoiCategories {
+            queries.append(URLQueryItem(name: "excludePoiCategories", value: excludePoiCategories.map { $0.rawValue }.joined(separator: ",")))
+        }
+        if let includePoiCategories {
+            queries.append(URLQueryItem(name: "includePoiCategories", value: includePoiCategories.map { $0.rawValue }.joined(separator: ",")))
+        }
+        if let limitToCountries {
+            queries.append(URLQueryItem(name: "limitToCountries", value: limitToCountries.joined(separator: ",")))
+        }
+        if let resultTypeFilter {
+            queries.append(URLQueryItem(name: "resultTypeFilter", value: resultTypeFilter.map { $0.rawValue }.joined(separator: ",")))
+        }
+        if let lang {
+            queries.append(URLQueryItem(name: "lang", value: lang))
+        }
+        if let searchLocation {
+            queries.append(URLQueryItem(name: "searchLocation", value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
+        }
+        if let searchRegion, let searchRegionString = searchRegion.toString {
+            queries.append(URLQueryItem(name: "searchRegion", value: searchRegionString))
+        }
+        if let userLocation {
+            queries.append(URLQueryItem(name: "userLocation", value: "\(userLocation.latitude),\(userLocation.longitude)"))
+        }
+        if let searchRegionPriority {
+            queries.append(URLQueryItem(name: "searchRegionPriority", value: searchRegionPriority.rawValue))
+        }
+        if let includeAddressCategories {
+            queries.append(URLQueryItem(name: "includeAddressCategories", value: includeAddressCategories.map { $0.rawValue }.joined(separator: ",")))
+        }
+        if let excludeAddressCategories {
+            queries.append(URLQueryItem(name: "excludeAddressCategories", value: excludeAddressCategories.map { $0.rawValue }.joined(separator: ",")))
+        }
+        url.append(queryItems: queries)
+        return try await decoder.decode(SearchAutocompleteResponse.self, from: httpGet(url: url)).results ?? []
+    }
+
+    /// Find directions by specific criteria.
     /// 
     /// > Note: You can't specify both `searchLocation` and `searchRegion` in the same request.
     /// 
@@ -125,7 +281,7 @@ public struct AppleMapsClient: Sendable {
         lang: String? = nil,
         requestsAlternateRoutes: Bool? = nil,
         searchLocation: (latitude: Double, longitude: Double)? = nil,
-        searchRegion: (northLatitude: Double, eastLongitude: Double, southLatitude: Double, westLongitude: Double)? = nil,
+        searchRegion: MapRegion? = nil,
         transportType: DirectionsTransportType? = nil,
         userLocation: (latitude: Double, longitude: Double)? = nil
     ) async throws -> DirectionsResponse {
@@ -166,8 +322,8 @@ public struct AppleMapsClient: Sendable {
         if let searchLocation {
             queries.append(URLQueryItem(name: "searchLocation", value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
         }
-        if let searchRegion {
-            queries.append(URLQueryItem(name: "searchRegion", value: "\(searchRegion.northLatitude),\(searchRegion.eastLongitude),\(searchRegion.southLatitude),\(searchRegion.westLongitude)"))
+        if let searchRegion, let searchRegionString = searchRegion.toString {
+            queries.append(URLQueryItem(name: "searchRegion", value: searchRegionString))
         }
         if let transportType {
             queries.append(URLQueryItem(name: "transportType", value: transportType.rawValue))
@@ -176,12 +332,10 @@ public struct AppleMapsClient: Sendable {
             queries.append(URLQueryItem(name: "userLocation", value: "\(userLocation.latitude),\(userLocation.longitude)"))
         }
         url.append(queryItems: queries)
-
-        let data = try await self.httpGet(url: url)
-        return try decoder.decode(DirectionsResponse.self, from: data)
+        return try await decoder.decode(DirectionsResponse.self, from: httpGet(url: url))
     }
 
-    /// Makes an Estimates Time of Arrival (ETA) request.
+    /// Returns the estimated time of arrival (ETA) and distance between starting and ending locations.
     /// 
     /// > Note: You can't specify both `arrivalDate` and `departureDate` in the same request.
     /// 
@@ -192,14 +346,14 @@ public struct AppleMapsClient: Sendable {
     ///   - departureDate: The time of departure to use in an estimated arrival time request.
     ///   - arrivalDate: The intended time of arrival.
     /// 
-    /// - Returns: An array of ``EtaResponse`` objects that contain distance and time from the origin to each destination.
+    /// - Returns: An array of ``Eta`` objects that contain distance and time from the origin to each destination.
     public func eta(
         from origin: (latitude: Double, longitude: Double),
         to destinations: [(latitude: Double, longitude: Double)],
         transportType: EtaTransportType? = nil,
         departureDate: Date? = nil,
         arrivalDate: Date? = nil
-    ) async throws -> EtaResponse {
+    ) async throws -> [Eta] {
         var url = URL(string: "\(Self.apiServer)/v1/etas")!
         var queries: [URLQueryItem] = [
             URLQueryItem(name: "origin", value: "\(origin.latitude),\(origin.longitude)"),
@@ -229,12 +383,10 @@ public struct AppleMapsClient: Sendable {
             )))
         }
         url.append(queryItems: queries)
-
-        let data = try await self.httpGet(url: url)
-        return try decoder.decode(EtaResponse.self, from: data)
+        return try await decoder.decode(EtaResponse.self, from: httpGet(url: url)).etas ?? []
     }
 
-    /// Makes an Estimates Time of Arrival (ETA) request.
+    /// Returns the estimated time of arrival (ETA) and distance between starting and ending locations.
     /// 
     /// > Note: You can't specify both `arrivalDate` and `departureDate` in the same request.
     /// 
@@ -245,14 +397,14 @@ public struct AppleMapsClient: Sendable {
     ///   - departureDate: The time of departure to use in an estimated arrival time request.
     ///   - arrivalDate: The intended time of arrival.
     /// 
-    /// - Returns: An array of ``EtaResponse`` objects that contain distance and time from the origin to each destination.
+    /// - Returns: An array of ``Eta`` objects that contain distance and time from the origin to each destination.
     public func etaBetweenAddresses(
         from origin: String,
         to destinations: [String],
         transportType: EtaTransportType? = nil,
         departureDate: Date? = nil,
         arrivalDate: Date? = nil
-    ) async throws -> EtaResponse {
+    ) async throws -> [Eta] {
         var destinationCoordinates: [(latitude: Double, longitude: Double)] = []
         for destination in destinations {
             try await destinationCoordinates.append(self.getCoordinate(from: destination))
@@ -276,12 +428,12 @@ public struct AppleMapsClient: Sendable {
     /// - Throws: Error response object.
     private func httpGet(url: URL) async throws -> ByteBuffer {
         var headers = HTTPHeaders()
-        headers.add(name: "Authorization", value: "Bearer \(self.accessToken)")
+        headers.add(name: "Authorization", value: "Bearer \(accessToken)")
 
         var request = HTTPClientRequest(url: url.absoluteString)
         request.headers = headers
 
-        let response = try await self.httpClient.execute(request, timeout: .seconds(30))
+        let response = try await httpClient.execute(request, timeout: .seconds(30))
 
         if response.status == .ok {
             return try await response.body.collect(upTo: 1024 * 1024)
@@ -298,7 +450,7 @@ public struct AppleMapsClient: Sendable {
     /// 
     /// - Returns: A tuple representing coordinate.
     private func getCoordinate(from address: String) async throws -> (latitude: Double, longitude: Double) {
-        let places = try await self.geocode(address: address)
+        let places = try await geocode(address: address)
         guard let coordinate = places.first?.coordinate,
             let latitude = coordinate.latitude,
             let longitude = coordinate.longitude

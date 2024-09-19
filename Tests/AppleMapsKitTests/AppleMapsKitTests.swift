@@ -22,10 +22,16 @@ struct AppleMapsKitTests {
         )
     }
 
-    @Test(arguments: zip([(37.78, -122.42), nil], [nil, (38, -122.1, 37.5, -122.5)]))
+    @Test(
+        "Geocode",
+        arguments: zip(
+            [(37.78, -122.42), nil],
+            [nil, MapRegion(northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5)]
+        )
+    )
     func geocode(
         searchLocation: (latitude: Double, longitude: Double)?,
-        searchRegion: (northLatitude: Double, eastLongitude: Double, southLatitude: Double, westLongitude: Double)?
+        searchRegion: MapRegion?
     ) async throws {
         let places = try await client.geocode(
             address: "1 Apple Park, Cupertino, CA",
@@ -38,15 +44,80 @@ struct AppleMapsKitTests {
         #expect(!places.isEmpty)
     }
 
-    @Test func reverseGeocode() async throws {
+    @Test("Reverse geocode")
+    func reverseGeocode() async throws {
         let places = try await client.reverseGeocode(latitude: 37.33182, longitude: -122.03118, lang: "en-US")
         #expect(!places.isEmpty)
     }
 
-    @Test(arguments: zip([(37.7857, -122.4011), nil], [nil, (38, -122.1, 37.5, -122.5)]))
+    @Test(
+        "Search",
+        arguments: zip(
+            [(37.78, -122.42), nil],
+            [nil, MapRegion(northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5)]
+        )
+    )
+    func search(
+        searchLocation: (latitude: Double, longitude: Double)?,
+        searchRegion: MapRegion?
+    ) async throws {
+        let searchResponse = try await client.search(
+            for: "eiffel tower",
+            excludePoiCategories: [.airport],
+            includePoiCategories: [.landmark],
+            limitToCountries: ["US", "CA"],
+            resultTypeFilter: [.pointOfInterest, .physicalFeature, .poi, .address],
+            lang: "en-US",
+            searchLocation: searchLocation,
+            searchRegion: searchRegion,
+            userLocation: (latitude: 37.78, longitude: -122.42),
+            searchRegionPriority: .default,
+            enablePagination: false,
+            includeAddressCategories: [.postalCode],
+            excludeAddressCategories: [.administrativeArea]
+        )
+        let results = try #require(searchResponse.results)
+        #expect(!results.isEmpty)
+    }
+
+    @Test(
+        "Search Auto Complete",
+        arguments: zip(
+            [(37.78, -122.42), nil],
+            [nil, MapRegion(northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5)]
+        )
+    )
+    func searchAutoComplete(
+        searchLocation: (latitude: Double, longitude: Double)?,
+        searchRegion: MapRegion?
+    ) async throws {
+        let results = try await client.searchAutoComplete(
+            for: "eiffel",
+            excludePoiCategories: [.airport],
+            includePoiCategories: [.landmark],
+            limitToCountries: ["US", "CA"],
+            resultTypeFilter: [.pointOfInterest, .physicalFeature, .poi, .address, .query],
+            lang: "en-US",
+            searchLocation: searchLocation,
+            searchRegion: searchRegion,
+            userLocation: (latitude: 37.78, longitude: -122.42),
+            searchRegionPriority: .default,
+            includeAddressCategories: [.postalCode],
+            excludeAddressCategories: [.administrativeArea]
+        )
+        #expect(!results.isEmpty)
+    }
+
+    @Test(
+        "Directions",
+        arguments: zip(
+            [(37.7857, -122.4011), nil],
+            [nil, MapRegion(northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5)]
+        )
+    )
     func directions(
         searchLocation: (latitude: Double, longitude: Double)?,
-        searchRegion: (northLatitude: Double, eastLongitude: Double, southLatitude: Double, westLongitude: Double)?
+        searchRegion: MapRegion?
     ) async throws {
         let arrivalDirections = try await client.directions(
             from: "37.7857,-122.4011",
@@ -79,9 +150,15 @@ struct AppleMapsKitTests {
         #expect(!departureRoutes.isEmpty)
     }
 
-    @Test(arguments: zip([Date(timeIntervalSinceNow: 3600), nil], [nil, Date(timeIntervalSinceNow: 3600)]))
+    @Test(
+        "ETA",
+        arguments: zip(
+            [Date(timeIntervalSinceNow: 3600), nil],
+            [nil, Date(timeIntervalSinceNow: 3600)]
+        )
+    )
     func eta(arrivalDate: Date?, departureDate: Date?) async throws {
-        let etaResponse = try await client.eta(
+        let etas = try await client.eta(
             from: (latitude: 37.331423, longitude: -122.030503),
             to: [
                 (latitude: 37.32556561130194, longitude: -121.94635203581443),
@@ -91,20 +168,24 @@ struct AppleMapsKitTests {
             departureDate: departureDate,
             arrivalDate: arrivalDate
         )
-        let etas = try #require(etaResponse.etas)
         #expect(!etas.isEmpty)
     }
 
-    @Test(arguments: zip([Date(timeIntervalSinceNow: 3600), nil], [nil, Date(timeIntervalSinceNow: 3600)]))
+    @Test(
+        "ETA between addresses",
+        arguments: zip(
+            [Date(timeIntervalSinceNow: 3600), nil],
+            [nil, Date(timeIntervalSinceNow: 3600)]
+        )
+    )
     func etaBetweenAddresses(arrivalDate: Date?, departureDate: Date?) async throws {
-        let etaResponse = try await client.etaBetweenAddresses(
+        let etas = try await client.etaBetweenAddresses(
             from: "San Francisco City Hall, CA",
             to: ["Golden Gate Park, San Francisco"],
             transportType: .transit,
             departureDate: departureDate,
             arrivalDate: arrivalDate
         )
-        let etas = try #require(etaResponse.etas)
         #expect(!etas.isEmpty)
     }
 }
