@@ -4,6 +4,8 @@
 
 ## Overview
 
+Use this web-based service to streamline your app’s API by moving georelated searches for places, points of interest, geocoding, directions, possible autocompletions for searches, and estimated time of arrival (ETA) calculations from inside your app to your server.
+
 ### Getting Started
 
 Use the SPM string to easily include the dependendency in your `Package.swift` file
@@ -60,6 +62,50 @@ let client = try await AppleMapsClient(
 )
 
 let places = try await client.reverseGeocode(latitude: 37.33182, longitude: -122.03118)
+```
+
+### Search for places that match specific criteria
+
+Find places by name or by specific search criteria.
+
+```swift
+import AppleMapsKit
+import AsyncHTTPClient
+
+let client = try await AppleMapsClient(
+    httpClient: HTTPClient(...),
+    teamID: "DEF123GHIJ",
+    keyID: "ABC123DEFG",
+    key: """
+    -----BEGIN PRIVATE KEY-----
+    ...
+    -----END PRIVATE KEY-----
+    """
+)
+
+let searchResponse = try await client.search(for: "eiffel tower")
+```
+
+### Search for places that meet specific criteria to autocomplete a place search
+
+Find results that you can use to autocomplete searches.
+
+```swift
+import AppleMapsKit
+import AsyncHTTPClient
+
+let client = try await AppleMapsClient(
+    httpClient: HTTPClient(...),
+    teamID: "DEF123GHIJ",
+    keyID: "ABC123DEFG",
+    key: """
+    -----BEGIN PRIVATE KEY-----
+    ...
+    -----END PRIVATE KEY-----
+    """
+)
+
+let results = try await client.searchAutoComplete(for: "eiffel")
 ```
 
 ### Search for directions and estimated travel time between locations
