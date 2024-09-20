@@ -1,9 +1,9 @@
 # AppleMapsKit
 
+🗺️ Integrate the [Apple Maps Server API](https://developer.apple.com/documentation/applemapsserverapi) into Swift server applications
+
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Ffpseverino%2Fapple-maps-kit%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/fpseverino/apple-maps-kit)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Ffpseverino%2Fapple-maps-kit%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/fpseverino/apple-maps-kit)
-
-🗺️ Integrate the [Apple Maps Server API](https://developer.apple.com/documentation/applemapsserverapi) into Swift server applications
 
 ## Overview
 
