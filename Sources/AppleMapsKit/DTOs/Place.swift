@@ -71,7 +71,7 @@ public struct StructuredAddress: Decodable, Sendable {
 
     /// The number on the street at the place.
     public let subThoroughfare: String?
-    
+
     /// The street name at the place.
     public let thoroughfare: String?
 }

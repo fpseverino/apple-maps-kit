@@ -1,7 +1,7 @@
-import Testing
-import Foundation
-import AsyncHTTPClient
 import AppleMapsKit
+import AsyncHTTPClient
+import Foundation
+import Testing
 
 struct AppleMapsKitTests {
     var client: AppleMapsClient
@@ -13,12 +13,12 @@ struct AppleMapsKitTests {
             teamID: "DEF123GHIJ",
             keyID: "ABC123DEFG",
             key: """
-            -----BEGIN PRIVATE KEY-----
-            MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgevZzL1gdAFr88hb2
-            OF/2NxApJCzGCEDdfSp6VQO30hyhRANCAAQRWz+jn65BtOMvdyHKcvjBeBSDZH2r
-            1RTwjmYSi9R/zpBnuQ4EiMnCqfMPWiZqB4QdbAd0E7oH50VpuZ1P087G
-            -----END PRIVATE KEY-----
-            """
+                -----BEGIN PRIVATE KEY-----
+                MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgevZzL1gdAFr88hb2
+                OF/2NxApJCzGCEDdfSp6VQO30hyhRANCAAQRWz+jn65BtOMvdyHKcvjBeBSDZH2r
+                1RTwjmYSi9R/zpBnuQ4EiMnCqfMPWiZqB4QdbAd0E7oH50VpuZ1P087G
+                -----END PRIVATE KEY-----
+                """
         )
     }
 
@@ -26,7 +26,12 @@ struct AppleMapsKitTests {
         "Geocode",
         arguments: zip(
             [(37.78, -122.42), nil],
-            [nil, MapRegion(northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5)]
+            [
+                nil,
+                MapRegion(
+                    northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5,
+                    westLongitude: -122.5),
+            ]
         )
     )
     func geocode(
@@ -46,7 +51,8 @@ struct AppleMapsKitTests {
 
     @Test("Reverse geocode")
     func reverseGeocode() async throws {
-        let places = try await client.reverseGeocode(latitude: 37.33182, longitude: -122.03118, lang: "en-US")
+        let places = try await client.reverseGeocode(
+            latitude: 37.33182, longitude: -122.03118, lang: "en-US")
         #expect(!places.isEmpty)
     }
 
@@ -54,7 +60,12 @@ struct AppleMapsKitTests {
         "Search",
         arguments: zip(
             [(37.78, -122.42), nil],
-            [nil, MapRegion(northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5)]
+            [
+                nil,
+                MapRegion(
+                    northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5,
+                    westLongitude: -122.5),
+            ]
         )
     )
     func search(
@@ -84,7 +95,12 @@ struct AppleMapsKitTests {
         "Search Auto Complete",
         arguments: zip(
             [(37.78, -122.42), nil],
-            [nil, MapRegion(northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5)]
+            [
+                nil,
+                MapRegion(
+                    northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5,
+                    westLongitude: -122.5),
+            ]
         )
     )
     func searchAutoComplete(
@@ -112,7 +128,12 @@ struct AppleMapsKitTests {
         "Directions",
         arguments: zip(
             [(37.7857, -122.4011), nil],
-            [nil, MapRegion(northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5)]
+            [
+                nil,
+                MapRegion(
+                    northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5,
+                    westLongitude: -122.5),
+            ]
         )
     )
     func directions(
@@ -162,7 +183,7 @@ struct AppleMapsKitTests {
             from: (latitude: 37.331423, longitude: -122.030503),
             to: [
                 (latitude: 37.32556561130194, longitude: -121.94635203581443),
-                (latitude: 37.44176585512703, longitude: -122.17259315798667)
+                (latitude: 37.44176585512703, longitude: -122.17259315798667),
             ],
             transportType: .transit,
             departureDate: departureDate,

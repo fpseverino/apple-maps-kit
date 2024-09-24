@@ -1,9 +1,9 @@
 /// An object that contains information you can use to suggest addresses and further refine search results.
 public struct AutocompleteResult: Decodable, Sendable {
     /// The relative URI to the `search` endpoint to use to fetch more details pertaining to the result.
-    /// 
+    ///
     /// If available, the framework encodes opaque data about the autocomplete result in the completion URL’s `metadata` parameter.
-    /// 
+    ///
     /// If clients need to fetch the search result in a certain language,
     /// they’re responsible for specifying the `lang` parameter in the request.
     public let completionUrl: String?

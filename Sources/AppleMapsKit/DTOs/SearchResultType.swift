@@ -13,7 +13,7 @@ public enum SearchResultType: String, Sendable {
     case pointOfInterest
 
     /// A search query string.
-    /// 
+    ///
     /// > Note: This result type is only available for auto complete search requests.
     case query
 }

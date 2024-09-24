@@ -1,7 +1,7 @@
 /// An object that contains the search region and an array of place descriptions that a search returns.
 public struct SearchResponse: Decodable, Sendable {
     /// Represents a rectangular region on a map expressed as south-west and north-east points.
-    /// 
+    ///
     /// More specifically south latitude, west longitude, north latitude and east longitude.
     public let displayMapRegion: MapRegion?
 
