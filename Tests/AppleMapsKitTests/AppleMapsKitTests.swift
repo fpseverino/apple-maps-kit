@@ -30,14 +30,12 @@ struct AppleMapsKitTests {
                 nil,
                 MapRegion(
                     northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5,
-                    westLongitude: -122.5),
+                    westLongitude: -122.5
+                ),
             ]
         )
     )
-    func geocode(
-        searchLocation: (latitude: Double, longitude: Double)?,
-        searchRegion: MapRegion?
-    ) async throws {
+    func geocode(searchLocation: (latitude: Double, longitude: Double)?, searchRegion: MapRegion?) async throws {
         let places = try await client.geocode(
             address: "1 Apple Park, Cupertino, CA",
             limitToCountries: ["US", "CA"],
@@ -51,8 +49,7 @@ struct AppleMapsKitTests {
 
     @Test("Reverse geocode")
     func reverseGeocode() async throws {
-        let places = try await client.reverseGeocode(
-            latitude: 37.33182, longitude: -122.03118, lang: "en-US")
+        let places = try await client.reverseGeocode(latitude: 37.33182, longitude: -122.03118, lang: "en-US")
         #expect(!places.isEmpty)
     }
 
@@ -64,14 +61,12 @@ struct AppleMapsKitTests {
                 nil,
                 MapRegion(
                     northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5,
-                    westLongitude: -122.5),
+                    westLongitude: -122.5
+                ),
             ]
         )
     )
-    func search(
-        searchLocation: (latitude: Double, longitude: Double)?,
-        searchRegion: MapRegion?
-    ) async throws {
+    func search(searchLocation: (latitude: Double, longitude: Double)?, searchRegion: MapRegion?) async throws {
         let searchResponse = try await client.search(
             for: "eiffel tower",
             excludePoiCategories: [.airport],
@@ -99,14 +94,12 @@ struct AppleMapsKitTests {
                 nil,
                 MapRegion(
                     northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5,
-                    westLongitude: -122.5),
+                    westLongitude: -122.5
+                ),
             ]
         )
     )
-    func searchAutoComplete(
-        searchLocation: (latitude: Double, longitude: Double)?,
-        searchRegion: MapRegion?
-    ) async throws {
+    func searchAutoComplete(searchLocation: (latitude: Double, longitude: Double)?, searchRegion: MapRegion?) async throws {
         let results = try await client.searchAutoComplete(
             for: "eiffel",
             excludePoiCategories: [.airport],
@@ -132,14 +125,12 @@ struct AppleMapsKitTests {
                 nil,
                 MapRegion(
                     northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5,
-                    westLongitude: -122.5),
+                    westLongitude: -122.5
+                ),
             ]
         )
     )
-    func directions(
-        searchLocation: (latitude: Double, longitude: Double)?,
-        searchRegion: MapRegion?
-    ) async throws {
+    func directions(searchLocation: (latitude: Double, longitude: Double)?, searchRegion: MapRegion?) async throws {
         let arrivalDirections = try await client.directions(
             from: "37.7857,-122.4011",
             to: "San Francisco City Hall, CA",
@@ -171,13 +162,7 @@ struct AppleMapsKitTests {
         #expect(!departureRoutes.isEmpty)
     }
 
-    @Test(
-        "ETA",
-        arguments: zip(
-            [Date(timeIntervalSinceNow: 3600), nil],
-            [nil, Date(timeIntervalSinceNow: 3600)]
-        )
-    )
+    @Test("ETA", arguments: zip([Date(timeIntervalSinceNow: 3600), nil], [nil, Date(timeIntervalSinceNow: 3600)]))
     func eta(arrivalDate: Date?, departureDate: Date?) async throws {
         let etas = try await client.eta(
             from: (latitude: 37.331423, longitude: -122.030503),
@@ -192,13 +177,7 @@ struct AppleMapsKitTests {
         #expect(!etas.isEmpty)
     }
 
-    @Test(
-        "ETA between addresses",
-        arguments: zip(
-            [Date(timeIntervalSinceNow: 3600), nil],
-            [nil, Date(timeIntervalSinceNow: 3600)]
-        )
-    )
+    @Test("ETA between addresses", arguments: zip([Date(timeIntervalSinceNow: 3600), nil], [nil, Date(timeIntervalSinceNow: 3600)]))
     func etaBetweenAddresses(arrivalDate: Date?, departureDate: Date?) async throws {
         let etas = try await client.etaBetweenAddresses(
             from: "San Francisco City Hall, CA",

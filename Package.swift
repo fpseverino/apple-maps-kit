@@ -10,8 +10,8 @@ let package = Package(
         .library(name: "AppleMapsKit", targets: ["AppleMapsKit"])
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.22.0"),
-        .package(url: "https://github.com/vapor/jwt-kit.git", from: "5.0.0-rc.2"),
+        .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.23.0"),
+        .package(url: "https://github.com/vapor/jwt-kit.git", from: "5.0.0"),
     ],
     targets: [
         .target(

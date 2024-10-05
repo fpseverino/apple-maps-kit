@@ -54,27 +54,19 @@ public struct AppleMapsClient: Sendable {
         var url = URL(string: "\(Self.apiServer)/v1/geocode")!
         var queries: [URLQueryItem] = [URLQueryItem(name: "q", value: address)]
         if let limitToCountries {
-            queries.append(
-                URLQueryItem(
-                    name: "limitToCountries", value: limitToCountries.joined(separator: ",")))
+            queries.append(URLQueryItem(name: "limitToCountries", value: limitToCountries.joined(separator: ",")))
         }
         if let lang {
             queries.append(URLQueryItem(name: "lang", value: lang))
         }
         if let searchLocation {
-            queries.append(
-                URLQueryItem(
-                    name: "searchLocation",
-                    value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
+            queries.append(URLQueryItem(name: "searchLocation", value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
         }
         if let searchRegion, let searchRegionString = searchRegion.toString {
             queries.append(URLQueryItem(name: "searchRegion", value: searchRegionString))
         }
         if let userLocation {
-            queries.append(
-                URLQueryItem(
-                    name: "userLocation",
-                    value: "\(userLocation.latitude),\(userLocation.longitude)"))
+            queries.append(URLQueryItem(name: "userLocation", value: "\(userLocation.latitude),\(userLocation.longitude)"))
         }
         url.append(queryItems: queries)
         return try await decoder.decode(PlaceResults.self, from: httpGet(url: url)).results ?? []
@@ -88,9 +80,7 @@ public struct AppleMapsClient: Sendable {
     ///   - lang: The language the server uses when returning the response, specified using a BCP 47 language code.
     ///
     /// - Returns: An array of one or more ``Place`` objects.
-    public func reverseGeocode(latitude: Double, longitude: Double, lang: String? = nil)
-        async throws -> [Place]
-    {
+    public func reverseGeocode(latitude: Double, longitude: Double, lang: String? = nil) async throws -> [Place] {
         var url = URL(string: "\(Self.apiServer)/v1/reverseGeocode")!
         var queries: [URLQueryItem] = [URLQueryItem(name: "loc", value: "\(latitude),\(longitude)")]
         if let lang {
@@ -141,20 +131,16 @@ public struct AppleMapsClient: Sendable {
         var queries: [URLQueryItem] = [URLQueryItem(name: "q", value: place)]
         if let excludePoiCategories {
             queries.append(
-                URLQueryItem(
-                    name: "excludePoiCategories",
-                    value: excludePoiCategories.map { $0.rawValue }.joined(separator: ",")))
+                URLQueryItem(name: "excludePoiCategories", value: excludePoiCategories.map { $0.rawValue }.joined(separator: ","))
+            )
         }
         if let includePoiCategories {
             queries.append(
-                URLQueryItem(
-                    name: "includePoiCategories",
-                    value: includePoiCategories.map { $0.rawValue }.joined(separator: ",")))
+                URLQueryItem(name: "includePoiCategories", value: includePoiCategories.map { $0.rawValue }.joined(separator: ","))
+            )
         }
         if let limitToCountries {
-            queries.append(
-                URLQueryItem(
-                    name: "limitToCountries", value: limitToCountries.joined(separator: ",")))
+            queries.append(URLQueryItem(name: "limitToCountries", value: limitToCountries.joined(separator: ",")))
         }
         if let resultTypeFilter {
             try queries.append(
@@ -166,29 +152,24 @@ public struct AppleMapsClient: Sendable {
                         }
                         return $0.rawValue
                     }
-                    .joined(separator: ",")))
+                    .joined(separator: ",")
+                )
+            )
         }
         if let lang {
             queries.append(URLQueryItem(name: "lang", value: lang))
         }
         if let searchLocation {
-            queries.append(
-                URLQueryItem(
-                    name: "searchLocation",
-                    value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
+            queries.append(URLQueryItem(name: "searchLocation", value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
         }
         if let searchRegion, let searchRegionString = searchRegion.toString {
             queries.append(URLQueryItem(name: "searchRegion", value: searchRegionString))
         }
         if let userLocation {
-            queries.append(
-                URLQueryItem(
-                    name: "userLocation",
-                    value: "\(userLocation.latitude),\(userLocation.longitude)"))
+            queries.append(URLQueryItem(name: "userLocation", value: "\(userLocation.latitude),\(userLocation.longitude)"))
         }
         if let searchRegionPriority {
-            queries.append(
-                URLQueryItem(name: "searchRegionPriority", value: searchRegionPriority.rawValue))
+            queries.append(URLQueryItem(name: "searchRegionPriority", value: searchRegionPriority.rawValue))
         }
         if let enablePagination {
             queries.append(URLQueryItem(name: "enablePagination", value: "\(enablePagination)"))
@@ -198,15 +179,13 @@ public struct AppleMapsClient: Sendable {
         }
         if let includeAddressCategories {
             queries.append(
-                URLQueryItem(
-                    name: "includeAddressCategories",
-                    value: includeAddressCategories.map { $0.rawValue }.joined(separator: ",")))
+                URLQueryItem(name: "includeAddressCategories", value: includeAddressCategories.map { $0.rawValue }.joined(separator: ","))
+            )
         }
         if let excludeAddressCategories {
             queries.append(
-                URLQueryItem(
-                    name: "excludeAddressCategories",
-                    value: excludeAddressCategories.map { $0.rawValue }.joined(separator: ",")))
+                URLQueryItem(name: "excludeAddressCategories", value: excludeAddressCategories.map { $0.rawValue }.joined(separator: ","))
+            )
         }
         url.append(queryItems: queries)
         return try await decoder.decode(SearchResponse.self, from: httpGet(url: url))
@@ -249,64 +228,47 @@ public struct AppleMapsClient: Sendable {
         var queries: [URLQueryItem] = [URLQueryItem(name: "q", value: place)]
         if let excludePoiCategories {
             queries.append(
-                URLQueryItem(
-                    name: "excludePoiCategories",
-                    value: excludePoiCategories.map { $0.rawValue }.joined(separator: ",")))
+                URLQueryItem(name: "excludePoiCategories", value: excludePoiCategories.map { $0.rawValue }.joined(separator: ","))
+            )
         }
         if let includePoiCategories {
             queries.append(
-                URLQueryItem(
-                    name: "includePoiCategories",
-                    value: includePoiCategories.map { $0.rawValue }.joined(separator: ",")))
+                URLQueryItem(name: "includePoiCategories", value: includePoiCategories.map { $0.rawValue }.joined(separator: ","))
+            )
         }
         if let limitToCountries {
-            queries.append(
-                URLQueryItem(
-                    name: "limitToCountries", value: limitToCountries.joined(separator: ",")))
+            queries.append(URLQueryItem(name: "limitToCountries", value: limitToCountries.joined(separator: ",")))
         }
         if let resultTypeFilter {
-            queries.append(
-                URLQueryItem(
-                    name: "resultTypeFilter",
-                    value: resultTypeFilter.map { $0.rawValue }.joined(separator: ",")))
+            queries.append(URLQueryItem(name: "resultTypeFilter", value: resultTypeFilter.map { $0.rawValue }.joined(separator: ",")))
         }
         if let lang {
             queries.append(URLQueryItem(name: "lang", value: lang))
         }
         if let searchLocation {
-            queries.append(
-                URLQueryItem(
-                    name: "searchLocation",
-                    value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
+            queries.append(URLQueryItem(name: "searchLocation", value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
         }
         if let searchRegion, let searchRegionString = searchRegion.toString {
             queries.append(URLQueryItem(name: "searchRegion", value: searchRegionString))
         }
         if let userLocation {
-            queries.append(
-                URLQueryItem(
-                    name: "userLocation",
-                    value: "\(userLocation.latitude),\(userLocation.longitude)"))
+            queries.append(URLQueryItem(name: "userLocation", value: "\(userLocation.latitude),\(userLocation.longitude)"))
         }
         if let searchRegionPriority {
-            queries.append(
-                URLQueryItem(name: "searchRegionPriority", value: searchRegionPriority.rawValue))
+            queries.append(URLQueryItem(name: "searchRegionPriority", value: searchRegionPriority.rawValue))
         }
         if let includeAddressCategories {
             queries.append(
-                URLQueryItem(
-                    name: "includeAddressCategories",
-                    value: includeAddressCategories.map { $0.rawValue }.joined(separator: ",")))
+                URLQueryItem(name: "includeAddressCategories", value: includeAddressCategories.map { $0.rawValue }.joined(separator: ","))
+            )
         }
         if let excludeAddressCategories {
             queries.append(
-                URLQueryItem(
-                    name: "excludeAddressCategories",
-                    value: excludeAddressCategories.map { $0.rawValue }.joined(separator: ",")))
+                URLQueryItem(name: "excludeAddressCategories", value: excludeAddressCategories.map { $0.rawValue }.joined(separator: ","))
+            )
         }
         url.append(queryItems: queries)
-        return try await decoder.decode(SearchAutocompleteResponse.self, from: httpGet(url: url))
-            .results ?? []
+        return try await decoder.decode(SearchAutocompleteResponse.self, from: httpGet(url: url)).results ?? []
     }
 
     /// Find directions by specific criteria.
@@ -359,12 +321,12 @@ public struct AppleMapsClient: Sendable {
                             .timeZone(separator: .omitted)
                             .time(includingFractionalSeconds: true)
                             .timeSeparator(.colon)
-                    )))
+                    )
+                )
+            )
         }
         if let avoid {
-            queries.append(
-                URLQueryItem(name: "avoid", value: avoid.map { $0.rawValue }.joined(separator: ","))
-            )
+            queries.append(URLQueryItem(name: "avoid", value: avoid.map { $0.rawValue }.joined(separator: ",")))
         }
         if let departureDate {
             queries.append(
@@ -378,7 +340,9 @@ public struct AppleMapsClient: Sendable {
                             .timeZone(separator: .omitted)
                             .time(includingFractionalSeconds: true)
                             .timeSeparator(.colon)
-                    )))
+                    )
+                )
+            )
         }
         if let lang {
             queries.append(URLQueryItem(name: "lang", value: lang))
@@ -388,10 +352,7 @@ public struct AppleMapsClient: Sendable {
                 URLQueryItem(name: "requestsAlternateRoutes", value: "\(requestsAlternateRoutes)"))
         }
         if let searchLocation {
-            queries.append(
-                URLQueryItem(
-                    name: "searchLocation",
-                    value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
+            queries.append(URLQueryItem(name: "searchLocation", value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
         }
         if let searchRegion, let searchRegionString = searchRegion.toString {
             queries.append(URLQueryItem(name: "searchRegion", value: searchRegionString))
@@ -400,10 +361,7 @@ public struct AppleMapsClient: Sendable {
             queries.append(URLQueryItem(name: "transportType", value: transportType.rawValue))
         }
         if let userLocation {
-            queries.append(
-                URLQueryItem(
-                    name: "userLocation",
-                    value: "\(userLocation.latitude),\(userLocation.longitude)"))
+            queries.append(URLQueryItem(name: "userLocation", value: "\(userLocation.latitude),\(userLocation.longitude)"))
         }
         url.append(queryItems: queries)
         return try await decoder.decode(DirectionsResponse.self, from: httpGet(url: url))
@@ -450,7 +408,9 @@ public struct AppleMapsClient: Sendable {
                             .timeZone(separator: .omitted)
                             .time(includingFractionalSeconds: true)
                             .timeSeparator(.colon)
-                    )))
+                    )
+                )
+            )
         }
         if let arrivalDate {
             queries.append(
@@ -464,7 +424,9 @@ public struct AppleMapsClient: Sendable {
                             .timeZone(separator: .omitted)
                             .time(includingFractionalSeconds: true)
                             .timeSeparator(.colon)
-                    )))
+                    )
+                )
+            )
         }
         url.append(queryItems: queries)
         return try await decoder.decode(EtaResponse.self, from: httpGet(url: url)).etas ?? []
@@ -522,8 +484,7 @@ public struct AppleMapsClient: Sendable {
         if response.status == .ok {
             return try await response.body.collect(upTo: 1024 * 1024)
         } else {
-            throw try await decoder.decode(
-                ErrorResponse.self, from: response.body.collect(upTo: 1024 * 1024))
+            throw try await decoder.decode(ErrorResponse.self, from: response.body.collect(upTo: 1024 * 1024))
         }
     }
 
@@ -534,9 +495,7 @@ public struct AppleMapsClient: Sendable {
     /// - Throws: ``AppleMapsKitError/noPlacesFound`` if no places are found.
     ///
     /// - Returns: A tuple representing coordinate.
-    private func getCoordinate(from address: String) async throws -> (
-        latitude: Double, longitude: Double
-    ) {
+    private func getCoordinate(from address: String) async throws -> (latitude: Double, longitude: Double) {
         let places = try await geocode(address: address)
         guard let coordinate = places.first?.coordinate,
             let latitude = coordinate.latitude,
@@ -558,8 +517,7 @@ extension AppleMapsClient {
     ///   - key: A MapKit JS private key.
     ///
     /// - Returns: A JWT token represented as `String`.
-    private static func createJWT(teamID: String, keyID: String, key: String) async throws -> String
-    {
+    private static func createJWT(teamID: String, keyID: String, key: String) async throws -> String {
         let keys = try await JWTKeyCollection().add(ecdsa: ES256PrivateKey(pem: key))
 
         var header = JWTHeader()
@@ -595,9 +553,7 @@ extension AppleMapsClient {
     /// - Throws: Error response object.
     ///
     /// - Returns: An access token.
-    private static func getAccessToken(httpClient: HTTPClient, authToken: String) async throws
-        -> String
-    {
+    private static func getAccessToken(httpClient: HTTPClient, authToken: String) async throws -> String {
         var headers = HTTPHeaders()
         headers.add(name: "Authorization", value: "Bearer \(authToken)")
 
@@ -611,8 +567,7 @@ extension AppleMapsClient {
                 .decode(TokenResponse.self, from: response.body.collect(upTo: 1024 * 1024))
                 .accessToken
         } else {
-            throw try await JSONDecoder().decode(
-                ErrorResponse.self, from: response.body.collect(upTo: 1024 * 1024))
+            throw try await JSONDecoder().decode(ErrorResponse.self, from: response.body.collect(upTo: 1024 * 1024))
         }
     }
 }
