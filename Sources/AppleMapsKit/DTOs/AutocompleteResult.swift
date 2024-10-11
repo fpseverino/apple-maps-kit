@@ -1,5 +1,5 @@
 /// An object that contains information you can use to suggest addresses and further refine search results.
-public struct AutocompleteResult: Decodable, Sendable {
+public struct AutocompleteResult: Codable, Sendable {
     /// The relative URI to the `search` endpoint to use to fetch more details pertaining to the result.
     ///
     /// If available, the framework encodes opaque data about the autocomplete result in the completion URL’s `metadata` parameter.
@@ -19,7 +19,7 @@ public struct AutocompleteResult: Decodable, Sendable {
 }
 
 /// An array of autocomplete results.
-struct SearchAutocompleteResponse: Decodable, Sendable {
+struct SearchAutocompleteResponse: Codable, Sendable {
     /// An array of ``AutocompleteResult`` objects.
     public let results: [AutocompleteResult]?
 }

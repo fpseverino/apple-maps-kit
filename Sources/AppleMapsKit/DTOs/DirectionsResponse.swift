@@ -1,5 +1,5 @@
 /// An object that describes the directions from a starting location to a destination in terms routes, steps, and a series of waypoints.
-public struct DirectionsResponse: Decodable, Sendable {
+public struct DirectionsResponse: Codable, Sendable {
     /// A ``Place`` object that describes the destination.
     public let destination: Place?
 
@@ -24,7 +24,7 @@ public struct DirectionsResponse: Decodable, Sendable {
     public let steps: [Step]?
 }
 
-public enum DirectionsTransportType: String, Decodable, Sendable {
+public enum DirectionsTransportType: String, Codable, Sendable {
     case automobile = "Automobile"
     case walking = "Walking"
 }
@@ -37,7 +37,7 @@ public enum DirectionsAvoid: String, Sendable {
 
 extension DirectionsResponse {
     /// An object that represent the components of a single route.
-    public struct Route: Decodable, Sendable {
+    public struct Route: Codable, Sendable {
         /// Total distance that the route covers, in meters.
         public let distanceMeters: Int?
 
@@ -71,7 +71,7 @@ extension DirectionsResponse {
     }
 
     /// An object that represents a step along a route.
-    public struct Step: Decodable, Sendable {
+    public struct Step: Codable, Sendable {
         /// Total distance covered by the step, in meters.
         public let distanceMeters: Int?
 

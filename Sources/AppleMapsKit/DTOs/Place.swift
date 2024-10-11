@@ -1,5 +1,5 @@
 /// An object that describes a place in terms of a variety of spatial, administrative, and qualitative properties.
-public struct Place: Decodable, Sendable {
+public struct Place: Codable, Sendable {
     /// The country or region of the place.
     public let country: String?
 
@@ -35,7 +35,7 @@ public struct Place: Decodable, Sendable {
 }
 
 /// An object that describes a location in terms of its longitude and latitude.
-public struct Location: Decodable, Sendable {
+public struct Location: Codable, Sendable {
     /// A double value that describes the latitude of the coordinate.
     public let latitude: Double?
 
@@ -44,7 +44,7 @@ public struct Location: Decodable, Sendable {
 }
 
 /// An object that describes the detailed address components of a place.
-public struct StructuredAddress: Decodable, Sendable {
+public struct StructuredAddress: Codable, Sendable {
     /// The state or province of the place.
     public let administrativeArea: String?
 
@@ -77,7 +77,7 @@ public struct StructuredAddress: Decodable, Sendable {
 }
 
 /// An object that contains an array of places.
-struct PlaceResults: Decodable {
+struct PlaceResults: Codable {
     /// An array of one or more ``Place`` objects.
     let results: [Place]?
 }

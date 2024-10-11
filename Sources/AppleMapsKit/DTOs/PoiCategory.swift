@@ -1,5 +1,5 @@
 /// A string that describes a specific point of interest (POI) category.
-public enum PoiCategory: String, Decodable, Sendable {
+public enum PoiCategory: String, Codable, Sendable {
     /// An airport.
     case airport = "Airport"
 

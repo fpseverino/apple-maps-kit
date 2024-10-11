@@ -1,5 +1,5 @@
 /// An object that contains an access token and an expiration time in seconds.
-struct TokenResponse: Decodable {
+struct TokenResponse: Codable {
     /// A string that represents the access token.
     let accessToken: String
 

@@ -1,5 +1,5 @@
 /// Information about an error that occurs while processing a request.
-public struct ErrorResponse: Error, Decodable, Sendable {
+public struct ErrorResponse: Error, Codable, Sendable {
     /// An array of strings with additional details about the error.
     public let details: [String]?
 
