@@ -1,5 +1,5 @@
 /// An object that describes an area to search in terms of its upper-right and lower-left corners as a pair of geographic points.
-public struct MapRegion: Decodable, Sendable {
+public struct MapRegion: Codable, Sendable {
     /// A double value that describes the east longitude of the map region.
     public let eastLongitude: Double?
 

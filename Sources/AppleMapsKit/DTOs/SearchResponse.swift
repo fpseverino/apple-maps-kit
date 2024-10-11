@@ -1,5 +1,5 @@
 /// An object that contains the search region and an array of place descriptions that a search returns.
-public struct SearchResponse: Decodable, Sendable {
+public struct SearchResponse: Codable, Sendable {
     /// Represents a rectangular region on a map expressed as south-west and north-east points.
     ///
     /// More specifically south latitude, west longitude, north latitude and east longitude.
@@ -13,7 +13,7 @@ public struct SearchResponse: Decodable, Sendable {
 
 extension SearchResponse {
     /// An object that returns a page of search responses.
-    public struct PaginationInfo: Decodable, Sendable {
+    public struct PaginationInfo: Codable, Sendable {
         /// An opaque string that the server uses to fetch the next page of search responses.
         public let nextPageToken: String?
 

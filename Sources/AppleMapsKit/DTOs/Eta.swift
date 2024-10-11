@@ -1,5 +1,5 @@
 /// An object that contains details about an estimated time of arrival (ETA).
-public struct Eta: Decodable, Sendable {
+public struct Eta: Codable, Sendable {
     /// The destination as a ``Location``.
     public let destination: Location?
 
@@ -17,12 +17,12 @@ public struct Eta: Decodable, Sendable {
 }
 
 /// An object that contains an array of one or more estimated times of arrival (ETAs).
-struct EtaResponse: Decodable, Sendable {
+struct EtaResponse: Codable, Sendable {
     /// An array of one or more ``EtaResponse/Eta`` objects.
     public let etas: [Eta]?
 }
 
-public enum EtaTransportType: String, Decodable, Sendable {
+public enum EtaTransportType: String, Codable, Sendable {
     case automobile = "Automobile"
     case walking = "Walking"
     case transit = "Transit"
