@@ -391,7 +391,8 @@ public struct AppleMapsClient: Sendable {
             URLQueryItem(name: "origin", value: "\(origin.latitude),\(origin.longitude)"),
             URLQueryItem(
                 name: "destinations",
-                value: destinations.map { "\($0.latitude),\($0.longitude)" }.joined(separator: "|")),
+                value: destinations.map { "\($0.latitude),\($0.longitude)" }.joined(separator: "|")
+            ),
         ]
         if let transportType {
             queries.append(URLQueryItem(name: "transportType", value: transportType.rawValue))
@@ -463,6 +464,49 @@ public struct AppleMapsClient: Sendable {
             departureDate: departureDate,
             arrivalDate: arrivalDate
         )
+    }
+
+    /// Obtain a ``Place`` object for a given Place ID.
+    ///
+    /// - Parameters:
+    ///   - id: A single Place ID.
+    ///   - lang: The language code for the response.
+    ///
+    /// - Returns: A ``Place`` result.
+    public func place(id: String, lang: String? = nil) async throws -> Place {
+        var url = URL(string: "\(Self.apiServer)/v1/place/\(id)")!
+        if let lang {
+            url.append(queryItems: [URLQueryItem(name: "lang", value: lang)])
+        }
+        return try await decoder.decode(Place.self, from: httpGet(url: url))
+    }
+
+    /// Obtain a set of ``Place`` objects for a given set of Place IDs.
+    ///
+    /// - Parameters:
+    ///   - ids: A list of ``Place`` IDs.
+    ///   - lang: The language code for the response.
+    ///
+    /// - Returns: A list of ``PlacesResponse`` results.
+    public func places(ids: [String], lang: String? = nil) async throws -> PlacesResponse {
+        var url = URL(string: "\(Self.apiServer)/v1/place")!
+        var queries: [URLQueryItem] = [URLQueryItem(name: "ids", value: ids.joined(separator: ","))]
+        if let lang {
+            queries.append(URLQueryItem(name: "lang", value: lang))
+        }
+        url.append(queryItems: queries)
+        return try await decoder.decode(PlacesResponse.self, from: httpGet(url: url))
+    }
+
+    /// Get a list of alternate ``Place`` IDs given one or more Place IDs.
+    ///
+    /// - Parameter ids: A list of alternate ``Place`` IDs.
+    ///
+    /// - Returns: A list of ``AlternateIDsResponse`` results.
+    public func alternatePlaceIDs(ids: [String]) async throws -> AlternateIDsResponse {
+        var url = URL(string: "\(Self.apiServer)/v1/place/alternateIds")!
+        url.append(queryItems: [URLQueryItem(name: "ids", value: ids.joined(separator: ","))])
+        return try await decoder.decode(AlternateIDsResponse.self, from: httpGet(url: url))
     }
 
     /// Makes an HTTP GET request.

@@ -188,4 +188,21 @@ struct AppleMapsKitTests {
         )
         #expect(!etas.isEmpty)
     }
+
+    @Test("Place") func place() async throws {
+        let place = try await client.place(id: "I7C250D2CDCB364A", lang: "en-US")
+        #expect(place != nil)
+    }
+
+    @Test("Places") func places() async throws {
+        let placesResponse = try await client.places(ids: ["ICFA2FAE5487B94AF", "IA6FD1E86A544F69D"], lang: "en-US")
+        let errors = try #require(placesResponse.errors)
+        #expect(!errors.isEmpty)
+    }
+
+    @Test("Alternate Place IDs") func alternatePlaceIDs() async throws {
+        let alternateIDsResponse = try await client.alternatePlaceIDs(ids: ["I7C250D2CDCB364A", "ICFA2FAE5487B94AF"])
+        let results = try #require(alternateIDsResponse.results)
+        #expect(!results.isEmpty)
+    }
 }
