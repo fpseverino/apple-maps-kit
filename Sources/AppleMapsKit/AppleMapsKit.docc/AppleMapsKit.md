@@ -11,7 +11,7 @@ Use this web-based service to streamline your app’s API by moving georelated s
 Use the SPM string to easily include the dependendency in your `Package.swift` file
 
 ```swift
-.package(url: "https://github.com/fpseverino/apple-maps-kit.git", from: "0.1.0")
+.package(url: "https://github.com/fpseverino/apple-maps-kit.git", from: "0.2.0")
 ```
 
 and add it to your target's dependencies:
@@ -28,12 +28,12 @@ and add it to your target's dependencies:
 - ``MapRegion``
 - ``Location``
 - ``StructuredAddress``
+- ``Place``
 
 ### Geocoding
 
 - <doc:Geocode>
 - <doc:ReverseGeocode>
-- ``Place``
 
 ### Searching
 
@@ -58,6 +58,12 @@ and add it to your target's dependencies:
 - <doc:GettingETAs>
 - ``Eta``
 - ``EtaTransportType``
+
+### Places
+
+- <doc:GettingPlaces>
+- ``PlacesResponse``
+- ``AlternateIDsResponse``
 
 ### Errors
 

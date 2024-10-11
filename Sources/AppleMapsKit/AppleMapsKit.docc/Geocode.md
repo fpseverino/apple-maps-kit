@@ -13,10 +13,10 @@ let client = try await AppleMapsClient(
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
     key: """
-    -----BEGIN PRIVATE KEY-----
-    ...
-    -----END PRIVATE KEY-----
-    """
+        -----BEGIN PRIVATE KEY-----
+        ...
+        -----END PRIVATE KEY-----
+        """
 )
 
 let places = try await client.geocode(address: "1 Apple Park, Cupertino, CA")

@@ -14,7 +14,7 @@ Use this web-based service to streamline your app’s API by moving georelated s
 Use the SPM string to easily include the dependendency in your `Package.swift` file
 
 ```swift
-.package(url: "https://github.com/fpseverino/apple-maps-kit.git", from: "0.1.0")
+.package(url: "https://github.com/fpseverino/apple-maps-kit.git", from: "0.2.0")
 ```
 
 and add it to your target's dependencies:
@@ -36,10 +36,10 @@ let client = try await AppleMapsClient(
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
     key: """
-    -----BEGIN PRIVATE KEY-----
-    ...
-    -----END PRIVATE KEY-----
-    """
+        -----BEGIN PRIVATE KEY-----
+        ...
+        -----END PRIVATE KEY-----
+        """
 )
 
 let places = try await client.geocode(address: "1 Apple Park, Cupertino, CA")
@@ -58,10 +58,10 @@ let client = try await AppleMapsClient(
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
     key: """
-    -----BEGIN PRIVATE KEY-----
-    ...
-    -----END PRIVATE KEY-----
-    """
+        -----BEGIN PRIVATE KEY-----
+        ...
+        -----END PRIVATE KEY-----
+        """
 )
 
 let places = try await client.reverseGeocode(latitude: 37.33182, longitude: -122.03118)
@@ -80,10 +80,10 @@ let client = try await AppleMapsClient(
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
     key: """
-    -----BEGIN PRIVATE KEY-----
-    ...
-    -----END PRIVATE KEY-----
-    """
+        -----BEGIN PRIVATE KEY-----
+        ...
+        -----END PRIVATE KEY-----
+        """
 )
 
 let searchResponse = try await client.search(for: "eiffel tower")
@@ -102,10 +102,10 @@ let client = try await AppleMapsClient(
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
     key: """
-    -----BEGIN PRIVATE KEY-----
-    ...
-    -----END PRIVATE KEY-----
-    """
+        -----BEGIN PRIVATE KEY-----
+        ...
+        -----END PRIVATE KEY-----
+        """
 )
 
 let results = try await client.searchAutoComplete(for: "eiffel")
@@ -124,10 +124,10 @@ let client = try await AppleMapsClient(
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
     key: """
-    -----BEGIN PRIVATE KEY-----
-    ...
-    -----END PRIVATE KEY-----
-    """
+        -----BEGIN PRIVATE KEY-----
+        ...
+        -----END PRIVATE KEY-----
+        """
 )
 
 let directions = try await client.directions(
@@ -149,10 +149,10 @@ let client = try await AppleMapsClient(
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
     key: """
-    -----BEGIN PRIVATE KEY-----
-    ...
-    -----END PRIVATE KEY-----
-    """
+        -----BEGIN PRIVATE KEY-----
+        ...
+        -----END PRIVATE KEY-----
+        """
 )
 
 let coordinateEtas = try await client.eta(
@@ -167,4 +167,30 @@ let addressEtas = try await client.etaBetweenAddresses(
     from: "San Francisco City Hall, CA",
     to: ["Golden Gate Park, San Francisco"],
 )
+```
+
+### Search for places using identifiers
+
+Obtain a set of ``Place`` objects for a given set of Place IDs or get a list of alternate Place IDs given one or more Place IDs.
+
+```swift
+import AppleMapsKit
+import AsyncHTTPClient
+
+let client = try await AppleMapsClient(
+    httpClient: HTTPClient(...),
+    teamID: "DEF123GHIJ",
+    keyID: "ABC123DEFG",
+    key: """
+        -----BEGIN PRIVATE KEY-----
+        ...
+        -----END PRIVATE KEY-----
+        """
+)
+
+let place = try await client.place(id: "I7C250D2CDCB364A")
+
+let placesResponse = try await client.places(ids: ["ICFA2FAE5487B94AF", "IA6FD1E86A544F69D"])
+
+let alternateIDsResponse = try await client.alternatePlaceIDs(ids: ["I7C250D2CDCB364A", "ICFA2FAE5487B94AF"])
 ```
