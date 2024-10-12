@@ -3,23 +3,16 @@ import AsyncHTTPClient
 import Foundation
 import Testing
 
-@Suite("AppleMapsKit Tests", .disabled(if: true, "Needs valid credentials"))
+@Suite("AppleMapsKit Tests")
 struct AppleMapsKitTests {
     var client: AppleMapsClient
 
     init() async throws {
-        // TODO: Replace the following values with valid ones.
         client = AppleMapsClient(
             httpClient: HTTPClient.shared,
-            teamID: "DEF123GHIJ",
-            keyID: "ABC123DEFG",
-            key: """
-                -----BEGIN PRIVATE KEY-----
-                MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgevZzL1gdAFr88hb2
-                OF/2NxApJCzGCEDdfSp6VQO30hyhRANCAAQRWz+jn65BtOMvdyHKcvjBeBSDZH2r
-                1RTwjmYSi9R/zpBnuQ4EiMnCqfMPWiZqB4QdbAd0E7oH50VpuZ1P087G
-                -----END PRIVATE KEY-----
-                """
+            teamID: ProcessInfo.processInfo.environment["TEAM_ID"]!,
+            keyID: ProcessInfo.processInfo.environment["KEY_ID"]!,
+            key: ProcessInfo.processInfo.environment["KEY"]!
         )
     }
 

@@ -6,6 +6,11 @@ on:
   pull_request: { types: [opened, reopened, synchronize, ready_for_review] }
   push: { branches: [ main ] }
 
+env:
+  TEAM_ID: ${{ secrets.TEAM_ID }}
+  KEY_ID: ${{ secrets.KEY_ID }}
+  KEY: ${{ secrets.KEY }}
+
 jobs:
   unit-tests:
     uses: vapor/ci/.github/workflows/run-unit-tests.yml@main
