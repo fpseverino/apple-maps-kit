@@ -8,7 +8,7 @@ Returns the latitude and longitude of the address you specify.
 import AppleMapsKit
 import AsyncHTTPClient
 
-let client = try await AppleMapsClient(
+let client = AppleMapsClient(
     httpClient: HTTPClient(...),
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",

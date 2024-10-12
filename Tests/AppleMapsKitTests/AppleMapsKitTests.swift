@@ -3,6 +3,7 @@ import AsyncHTTPClient
 import Foundation
 import Testing
 
+@Suite("AppleMapsKit Tests", .disabled(if: true, "Needs valid credentials"))
 struct AppleMapsKitTests {
     var client: AppleMapsClient
 

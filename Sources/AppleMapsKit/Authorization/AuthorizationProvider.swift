@@ -10,9 +10,7 @@ import Foundation
 import JWTKit
 import NIOHTTP1
 
-// MARK: - auth/c & auth/z
-internal actor AuthorizationProvider {
-
+actor AuthorizationProvider {
     private let httpClient: HTTPClient
     private let apiServer: String
     private let teamID: String
@@ -22,7 +20,7 @@ internal actor AuthorizationProvider {
     private var currentToken: TokenResponse?
     private var refreshTask: Task<TokenResponse, any Error>?
 
-    internal init(httpClient: HTTPClient, apiServer: String, teamID: String, keyID: String, key: String) {
+    init(httpClient: HTTPClient, apiServer: String, teamID: String, keyID: String, key: String) {
         self.httpClient = httpClient
         self.apiServer = apiServer
         self.teamID = teamID
@@ -32,17 +30,17 @@ internal actor AuthorizationProvider {
 
     func validToken() async throws -> TokenResponse {
         // If we're currently refreshing a token, await the value for our refresh task to make sure we return the refreshed token.
-        if let handle = refreshTask {
-            return try await handle.value
+        if let refreshTask {
+            return try await refreshTask.value
         }
 
         // If we don't have a current token, we request a new one.
-        guard let token = currentToken else {
+        guard let currentToken else {
             return try await refreshToken()
         }
 
-        if token.isValid {
-            return token
+        if currentToken.isValid {
+            return currentToken
         }
 
         // None of the above applies so we'll need to refresh the token.
@@ -50,7 +48,7 @@ internal actor AuthorizationProvider {
     }
 
     private func refreshToken() async throws -> TokenResponse {
-        if let refreshTask = refreshTask {
+        if let refreshTask {
             return try await refreshTask.value
         }
 
@@ -67,9 +65,7 @@ internal actor AuthorizationProvider {
     }
 }
 
-// MARK: - HELPERS
 extension AuthorizationProvider {
-
     /// Makes an HTTP request to exchange Auth token for Access token.
     ///
     /// - Parameters:
@@ -79,7 +75,7 @@ extension AuthorizationProvider {
     /// - Throws: Error response object.
     ///
     /// - Returns: An access token.
-    fileprivate func getAccessToken(authToken: String) async throws -> TokenResponse {
+    private func getAccessToken(authToken: String) async throws -> TokenResponse {
         var headers = HTTPHeaders()
         headers.add(name: "Authorization", value: "Bearer \(authToken)")
 
@@ -89,8 +85,7 @@ extension AuthorizationProvider {
         let response = try await httpClient.execute(request, timeout: .seconds(30))
 
         if response.status == .ok {
-            return try await JSONDecoder()
-                .decode(TokenResponse.self, from: response.body.collect(upTo: 1024 * 1024))
+            return try await JSONDecoder().decode(TokenResponse.self, from: response.body.collect(upTo: 1024 * 1024))
         } else {
             throw try await JSONDecoder().decode(ErrorResponse.self, from: response.body.collect(upTo: 1024 * 1024))
         }
@@ -104,7 +99,7 @@ extension AuthorizationProvider {
     ///   - key: A MapKit JS private key.
     ///
     /// - Returns: A JWT token represented as `String`.
-    fileprivate func createJWT(teamID: String, keyID: String, key: String) async throws -> String {
+    private func createJWT(teamID: String, keyID: String, key: String) async throws -> String {
         let keys = try await JWTKeyCollection().add(ecdsa: ES256PrivateKey(pem: key))
 
         var header = JWTHeader()
