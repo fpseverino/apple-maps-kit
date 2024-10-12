@@ -8,7 +8,7 @@ struct AppleMapsKitTests {
 
     init() async throws {
         // TODO: Replace the following values with valid ones.
-        client = try await AppleMapsClient(
+        client = AppleMapsClient(
             httpClient: HTTPClient.shared,
             teamID: "DEF123GHIJ",
             keyID: "ABC123DEFG",

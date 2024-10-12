@@ -31,7 +31,7 @@ Returns the latitude and longitude of the address you specify.
 import AppleMapsKit
 import AsyncHTTPClient
 
-let client = try await AppleMapsClient(
+let client = AppleMapsClient(
     httpClient: HTTPClient(...),
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
@@ -53,7 +53,7 @@ Returns an array of addresses present at the coordinates you provide.
 import AppleMapsKit
 import AsyncHTTPClient
 
-let client = try await AppleMapsClient(
+let client = AppleMapsClient(
     httpClient: HTTPClient(...),
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
@@ -75,7 +75,7 @@ Find places by name or by specific search criteria.
 import AppleMapsKit
 import AsyncHTTPClient
 
-let client = try await AppleMapsClient(
+let client = AppleMapsClient(
     httpClient: HTTPClient(...),
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
@@ -97,7 +97,7 @@ Find results that you can use to autocomplete searches.
 import AppleMapsKit
 import AsyncHTTPClient
 
-let client = try await AppleMapsClient(
+let client = AppleMapsClient(
     httpClient: HTTPClient(...),
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
@@ -119,7 +119,7 @@ Find directions by specific criteria.
 import AppleMapsKit
 import AsyncHTTPClient
 
-let client = try await AppleMapsClient(
+let client = AppleMapsClient(
     httpClient: HTTPClient(...),
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
@@ -144,7 +144,7 @@ Returns the estimated time of arrival (ETA) and distance between starting and en
 import AppleMapsKit
 import AsyncHTTPClient
 
-let client = try await AppleMapsClient(
+let client = AppleMapsClient(
     httpClient: HTTPClient(...),
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
@@ -177,7 +177,7 @@ Obtain a set of ``Place`` objects for a given set of Place IDs or get a list of 
 import AppleMapsKit
 import AsyncHTTPClient
 
-let client = try await AppleMapsClient(
+let client = AppleMapsClient(
     httpClient: HTTPClient(...),
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",

@@ -1,15 +1,13 @@
 import AsyncHTTPClient
 import Foundation
-import JWTKit
 import NIOCore
-import NIOFoundationCompat
 import NIOHTTP1
 
 /// Methods to make calls to APIs such as geocode, search, and so on.
 public struct AppleMapsClient: Sendable {
     static let apiServer = "https://maps-api.apple.com"
     private let httpClient: HTTPClient
-    private let accessToken: String
+    private let authorizationProvider: AuthorizationProvider
 
     private let decoder = JSONDecoder()
 
@@ -22,11 +20,14 @@ public struct AppleMapsClient: Sendable {
     ///   - teamID: A 10-character Team ID obtained from your Apple Developer account.
     ///   - keyID: A 10-character key identifier that provides the ID of the private key that you obtain from your Apple Developer account.
     ///   - key: A MapKit JS private key.
-    public init(httpClient: HTTPClient, teamID: String, keyID: String, key: String) async throws {
+    public init(httpClient: HTTPClient, teamID: String, keyID: String, key: String) {
         self.httpClient = httpClient
-        self.accessToken = try await Self.getAccessToken(
+        self.authorizationProvider = AuthorizationProvider(
             httpClient: httpClient,
-            authToken: Self.createJWT(teamID: teamID, keyID: keyID, key: key)
+            apiServer: Self.apiServer,
+            teamID: teamID,
+            keyID: keyID,
+            key: key
         )
     }
 
@@ -518,6 +519,7 @@ public struct AppleMapsClient: Sendable {
     /// - Throws: Error response object.
     private func httpGet(url: URL) async throws -> ByteBuffer {
         var headers = HTTPHeaders()
+        let accessToken = try await authorizationProvider.validToken().accessToken
         headers.add(name: "Authorization", value: "Bearer \(accessToken)")
 
         var request = HTTPClientRequest(url: url.absoluteString)
@@ -548,70 +550,5 @@ public struct AppleMapsClient: Sendable {
             throw AppleMapsKitError.noPlacesFound
         }
         return (latitude, longitude)
-    }
-}
-
-// MARK: - auth/c & auth/z
-extension AppleMapsClient {
-    /// Creates a JWT token, which is auth token in this context.
-    ///
-    /// - Parameters:
-    ///   - teamID: A 10-character Team ID obtained from your Apple Developer account.
-    ///   - keyID: A 10-character key identifier that provides the ID of the private key that you obtain from your Apple Developer account.
-    ///   - key: A MapKit JS private key.
-    ///
-    /// - Returns: A JWT token represented as `String`.
-    private static func createJWT(teamID: String, keyID: String, key: String) async throws -> String {
-        let keys = try await JWTKeyCollection().add(ecdsa: ES256PrivateKey(pem: key))
-
-        var header = JWTHeader()
-        header.alg = "ES256"
-        header.kid = keyID
-        header.typ = "JWT"
-
-        struct Payload: JWTPayload {
-            let iss: IssuerClaim
-            let iat: IssuedAtClaim
-            let exp: ExpirationClaim
-
-            func verify(using key: some JWTAlgorithm) throws {
-                try self.exp.verifyNotExpired()
-            }
-        }
-
-        let payload = Payload(
-            iss: IssuerClaim(value: teamID),
-            iat: IssuedAtClaim(value: Date()),
-            exp: .init(value: Date().addingTimeInterval(30 * 60))
-        )
-
-        return try await keys.sign(payload, header: header)
-    }
-
-    /// Makes an HTTP request to exchange Auth token for Access token.
-    ///
-    /// - Parameters:
-    ///   - httpClient: The HTTP client to use.
-    ///   - authToken: The authorization token.
-    ///
-    /// - Throws: Error response object.
-    ///
-    /// - Returns: An access token.
-    private static func getAccessToken(httpClient: HTTPClient, authToken: String) async throws -> String {
-        var headers = HTTPHeaders()
-        headers.add(name: "Authorization", value: "Bearer \(authToken)")
-
-        var request = HTTPClientRequest(url: "\(apiServer)/v1/token")
-        request.headers = headers
-
-        let response = try await httpClient.execute(request, timeout: .seconds(30))
-
-        if response.status == .ok {
-            return try await JSONDecoder()
-                .decode(TokenResponse.self, from: response.body.collect(upTo: 1024 * 1024))
-                .accessToken
-        } else {
-            throw try await JSONDecoder().decode(ErrorResponse.self, from: response.body.collect(upTo: 1024 * 1024))
-        }
     }
 }
