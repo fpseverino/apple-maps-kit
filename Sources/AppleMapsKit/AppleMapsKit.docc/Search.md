@@ -8,7 +8,7 @@ Find places by name or by specific search criteria.
 import AppleMapsKit
 import AsyncHTTPClient
 
-let client = try await AppleMapsClient(
+let client = AppleMapsClient(
     httpClient: HTTPClient(...),
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",

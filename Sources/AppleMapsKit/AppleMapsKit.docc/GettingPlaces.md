@@ -8,7 +8,7 @@ Obtain a set of ``Place`` objects for a given set of Place IDs or get a list of 
 import AppleMapsKit
 import AsyncHTTPClient
 
-let client = try await AppleMapsClient(
+let client = AppleMapsClient(
     httpClient: HTTPClient(...),
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",

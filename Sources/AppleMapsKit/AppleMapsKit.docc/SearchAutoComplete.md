@@ -8,7 +8,7 @@ Find results that you can use to autocomplete searches.
 import AppleMapsKit
 import AsyncHTTPClient
 
-let client = try await AppleMapsClient(
+let client = AppleMapsClient(
     httpClient: HTTPClient(...),
     teamID: "DEF123GHIJ",
     keyID: "ABC123DEFG",
