@@ -1,6 +1,7 @@
 import AsyncHTTPClient
 import Foundation
-import NIOCore
+import NIO
+import NIOFoundationCompat
 import NIOHTTP1
 
 /// Methods to make calls to APIs such as geocode, search, and so on.
