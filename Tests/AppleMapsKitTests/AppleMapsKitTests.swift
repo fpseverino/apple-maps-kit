@@ -165,7 +165,11 @@ struct AppleMapsKitTests {
             )
             let arrivalRoutes = try #require(arrivalDirections.routes)
             #expect(!arrivalRoutes.isEmpty)
+        } when: {
+            credentialsAreInvalid
+        }
 
+        try await withKnownIssue {
             let departureDirections = try await client.directions(
                 from: "37.7857,-122.4011",
                 to: "San Francisco City Hall, CA",
@@ -247,5 +251,10 @@ struct AppleMapsKitTests {
         } when: {
             credentialsAreInvalid
         }
+    }
+
+    @Test("AppleMapsKitError") func appleMapsKitError() {
+        #expect(AppleMapsKitError.noPlacesFound.description == "AppleMapsKitError(errorType: noPlacesFound)")
+        #expect(AppleMapsKitError.invalidSearchResultType.description == "AppleMapsKitError(errorType: invalidSearchResultType)")
     }
 }

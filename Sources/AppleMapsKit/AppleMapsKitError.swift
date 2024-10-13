@@ -46,6 +46,6 @@ public struct AppleMapsKitError: Error, Sendable {
 
 extension AppleMapsKitError: CustomStringConvertible {
     public var description: String {
-        "AppleMapsKitError(errorType: \(self.errorType)"
+        "AppleMapsKitError(errorType: \(self.errorType))"
     }
 }
