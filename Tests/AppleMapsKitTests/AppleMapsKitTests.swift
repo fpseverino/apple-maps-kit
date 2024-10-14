@@ -1,7 +1,8 @@
-import AppleMapsKit
 import AsyncHTTPClient
 import Foundation
 import Testing
+
+@testable import AppleMapsKit
 
 @Suite("AppleMapsKit Tests")
 struct AppleMapsKitTests {
@@ -93,6 +94,34 @@ struct AppleMapsKitTests {
                 enablePagination: false,
                 includeAddressCategories: [.postalCode],
                 excludeAddressCategories: [.administrativeArea]
+            )
+            let results = try #require(searchResponse.results)
+            #expect(!results.isEmpty)
+        } when: {
+            credentialsAreInvalid
+        }
+    }
+
+    @Test("Search with invalid Result Type") func searchWithInvalidResultType() async throws {
+        do {
+            let _ = try await client.search(
+                for: "eiffel tower",
+                resultTypeFilter: [.pointOfInterest, .physicalFeature, .poi, .address, .query]
+            )
+            Issue.record("This call should throw an error")
+        } catch let error as AppleMapsKitError {
+            #expect(error.errorType.base == .invalidSearchResultType)
+        }
+    }
+
+    @Test("Search with Page Token") func searchWithPageToken() async throws {
+        try await withKnownIssue {
+            let searchResponse = try await client.search(
+                for: "eiffel tower",
+                resultTypeFilter: [.pointOfInterest, .physicalFeature, .poi, .address],
+                lang: "en-US",
+                enablePagination: true,
+                pageToken: "test"
             )
             let results = try #require(searchResponse.results)
             #expect(!results.isEmpty)
@@ -256,5 +285,29 @@ struct AppleMapsKitTests {
     @Test("AppleMapsKitError") func appleMapsKitError() {
         #expect(AppleMapsKitError.noPlacesFound.description == "AppleMapsKitError(errorType: noPlacesFound)")
         #expect(AppleMapsKitError.invalidSearchResultType.description == "AppleMapsKitError(errorType: invalidSearchResultType)")
+    }
+
+    @Test("MapRegion.toString") func mapRegionToString() throws {
+        let mapRegion = MapRegion(northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5)
+        #expect(mapRegion.toString == "38.0,-122.1,37.5,-122.5")
+
+        let jsonMapRegionWithNil = """
+            {
+                "northLatitude": 38.0,
+                "eastLongitude": -122.1,
+                "southLatitude": 37.5
+            }
+            """
+        let mapRegionWithNil = try JSONDecoder().decode(MapRegion.self, from: jsonMapRegionWithNil.data(using: .utf8)!)
+        #expect(mapRegionWithNil.northLatitude == 38.0)
+        #expect(mapRegionWithNil.eastLongitude == -122.1)
+        #expect(mapRegionWithNil.southLatitude == 37.5)
+        #expect(mapRegionWithNil.westLongitude == nil)
+        #expect(mapRegionWithNil.toString == nil)
+    }
+
+    @Test("ErrorResponse.description") func errorResponseDescription() {
+        let errorResponse = ErrorResponse(details: ["detail1", "detail2"], message: "message")
+        #expect(errorResponse.description == #"AppleMapsKitError(message: message, details: ["detail1", "detail2"])"#)
     }
 }
