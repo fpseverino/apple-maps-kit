@@ -32,10 +32,6 @@ public struct AppleMapsKitError: Error, Sendable {
 
     public var errorType: ErrorType { backing.errorType }
 
-    private init(backing: Backing) {
-        self.backing = backing
-    }
-
     private init(errorType: ErrorType) {
         self.backing = .init(errorType: errorType)
     }

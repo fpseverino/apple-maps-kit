@@ -9,7 +9,7 @@ struct TokenResponse: Codable {
     let expiresInSeconds: Int
 
     /// A date that indicates when then token will expire.
-    let expirationDate: Date
+    private let expirationDate: Date
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

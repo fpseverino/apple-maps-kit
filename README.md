@@ -5,6 +5,9 @@
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Ffpseverino%2Fapple-maps-kit%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/fpseverino/apple-maps-kit)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Ffpseverino%2Fapple-maps-kit%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/fpseverino/apple-maps-kit)
 
+[![](https://img.shields.io/github/actions/workflow/status/fpseverino/apple-maps-kit/test.yml?event=push&style=plastic&logo=github&label=tests&logoColor=%23ccc)](https://github.com/fpseverino/apple-maps-kit/actions/workflows/test.yml)
+[![](https://img.shields.io/codecov/c/github/fpseverino/apple-maps-kit?style=plastic&logo=codecov&label=codecov)](https://codecov.io/github/fpseverino/apple-maps-kit)
+
 ## Overview
 
 Use this web-based service to streamline your app’s API by moving georelated searches for places, points of interest, geocoding, directions, possible autocompletions for searches, and estimated time of arrival (ETA) calculations from inside your app to your server.
