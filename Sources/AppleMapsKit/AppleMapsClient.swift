@@ -456,11 +456,11 @@ public struct AppleMapsClient: Sendable {
     ) async throws -> [Eta] {
         var destinationCoordinates: [(latitude: Double, longitude: Double)] = []
         for destination in destinations {
-            try await destinationCoordinates.append(self.getCoordinate(from: destination))
+            try await destinationCoordinates.append(getCoordinate(from: destination))
         }
 
-        return try await self.eta(
-            from: self.getCoordinate(from: origin),
+        return try await eta(
+            from: getCoordinate(from: origin),
             to: destinationCoordinates,
             transportType: transportType,
             departureDate: departureDate,
@@ -520,8 +520,7 @@ public struct AppleMapsClient: Sendable {
     /// - Throws: Error response object.
     private func httpGet(url: URL) async throws -> ByteBuffer {
         var headers = HTTPHeaders()
-        let accessToken = try await authorizationProvider.validToken().accessToken
-        headers.add(name: "Authorization", value: "Bearer \(accessToken)")
+        headers.add(name: "Authorization", value: "Bearer \(try await authorizationProvider.accessToken)")
 
         var request = HTTPClientRequest(url: url.absoluteString)
         request.headers = headers
