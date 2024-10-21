@@ -30,13 +30,7 @@ struct AppleMapsKitTests {
         "Geocode",
         arguments: zip(
             [(37.78, -122.42), nil],
-            [
-                nil,
-                MapRegion(
-                    northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5,
-                    westLongitude: -122.5
-                ),
-            ]
+            [nil, MapRegion(northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5)]
         )
     )
     func geocode(searchLocation: (latitude: Double, longitude: Double)?, searchRegion: MapRegion?) async throws {
@@ -69,13 +63,7 @@ struct AppleMapsKitTests {
         "Search",
         arguments: zip(
             [(37.78, -122.42), nil],
-            [
-                nil,
-                MapRegion(
-                    northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5,
-                    westLongitude: -122.5
-                ),
-            ]
+            [nil, MapRegion(northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5)]
         )
     )
     func search(searchLocation: (latitude: Double, longitude: Double)?, searchRegion: MapRegion?) async throws {
@@ -103,19 +91,19 @@ struct AppleMapsKitTests {
     }
 
     @Test("Search with invalid Result Type") func searchWithInvalidResultType() async throws {
-        do {
-            let _ = try await client.search(
+        await #expect {
+            try await client.search(
                 for: "eiffel tower",
                 resultTypeFilter: [.pointOfInterest, .physicalFeature, .poi, .address, .query]
             )
-            Issue.record("This call should throw an error")
-        } catch let error as AppleMapsKitError {
-            #expect(error.errorType.base == .invalidSearchResultType)
+        } throws: { error in
+            guard let error = error as? AppleMapsKitError else { return false }
+            return error.errorType.base == .invalidSearchResultType
         }
     }
 
     @Test("Search with Page Token") func searchWithPageToken() async throws {
-        try await withKnownIssue {
+        await withKnownIssue {
             let searchResponse = try await client.search(
                 for: "eiffel tower",
                 resultTypeFilter: [.pointOfInterest, .physicalFeature, .poi, .address],
@@ -125,8 +113,6 @@ struct AppleMapsKitTests {
             )
             let results = try #require(searchResponse.results)
             #expect(!results.isEmpty)
-        } when: {
-            credentialsAreInvalid
         }
     }
 
@@ -134,13 +120,7 @@ struct AppleMapsKitTests {
         "Search Auto Complete",
         arguments: zip(
             [(37.78, -122.42), nil],
-            [
-                nil,
-                MapRegion(
-                    northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5,
-                    westLongitude: -122.5
-                ),
-            ]
+            [nil, MapRegion(northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5)]
         )
     )
     func searchAutoComplete(searchLocation: (latitude: Double, longitude: Double)?, searchRegion: MapRegion?) async throws {
@@ -169,13 +149,7 @@ struct AppleMapsKitTests {
         "Directions",
         arguments: zip(
             [(37.7857, -122.4011), nil],
-            [
-                nil,
-                MapRegion(
-                    northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5,
-                    westLongitude: -122.5
-                ),
-            ]
+            [nil, MapRegion(northLatitude: 38, eastLongitude: -122.1, southLatitude: 37.5, westLongitude: -122.5)]
         )
     )
     func directions(searchLocation: (latitude: Double, longitude: Double)?, searchRegion: MapRegion?) async throws {
