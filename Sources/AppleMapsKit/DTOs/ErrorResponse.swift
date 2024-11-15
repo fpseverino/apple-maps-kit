@@ -9,7 +9,7 @@ public struct ErrorResponse: Error, Codable, Sendable {
 
 extension ErrorResponse: CustomStringConvertible {
     public var description: String {
-        var result = #"AppleMapsKitError(message: \#(message ?? "nil")"#
+        var result = #"AppleMapsError(message: \#(message ?? "nil")"#
 
         if let details {
             result.append(", details: \(details)")

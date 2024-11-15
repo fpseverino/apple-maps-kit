@@ -8,7 +8,7 @@ import NIOHTTP1
 public struct AppleMapsClient: Sendable {
     static let apiServer = "https://maps-api.apple.com"
     private let httpClient: HTTPClient
-    private let authorizationProvider: AuthorizationProvider
+    private let authClient: AuthClient
 
     private let decoder = JSONDecoder()
 
@@ -23,9 +23,8 @@ public struct AppleMapsClient: Sendable {
     ///   - key: A MapKit JS private key.
     public init(httpClient: HTTPClient, teamID: String, keyID: String, key: String) {
         self.httpClient = httpClient
-        self.authorizationProvider = AuthorizationProvider(
+        self.authClient = AuthClient(
             httpClient: httpClient,
-            apiServer: Self.apiServer,
             teamID: teamID,
             keyID: keyID,
             key: key
@@ -350,8 +349,7 @@ public struct AppleMapsClient: Sendable {
             queries.append(URLQueryItem(name: "lang", value: lang))
         }
         if let requestsAlternateRoutes {
-            queries.append(
-                URLQueryItem(name: "requestsAlternateRoutes", value: "\(requestsAlternateRoutes)"))
+            queries.append(URLQueryItem(name: "requestsAlternateRoutes", value: "\(requestsAlternateRoutes)"))
         }
         if let searchLocation {
             queries.append(URLQueryItem(name: "searchLocation", value: "\(searchLocation.latitude),\(searchLocation.longitude)"))
@@ -468,6 +466,24 @@ public struct AppleMapsClient: Sendable {
         )
     }
 
+    /// Converts an address to a coordinate.
+    ///
+    /// - Parameter address: Address for which coordinate should be found.
+    ///
+    /// - Throws: ``AppleMapsKitError/noPlacesFound`` if no places are found.
+    ///
+    /// - Returns: A tuple representing coordinate.
+    private func getCoordinate(from address: String) async throws -> (latitude: Double, longitude: Double) {
+        let places = try await geocode(address: address)
+        guard let coordinate = places.first?.coordinate,
+            let latitude = coordinate.latitude,
+            let longitude = coordinate.longitude
+        else {
+            throw AppleMapsKitError.noPlacesFound
+        }
+        return (latitude, longitude)
+    }
+
     /// Obtain a ``Place`` object for a given Place ID.
     ///
     /// - Parameters:
@@ -510,7 +526,9 @@ public struct AppleMapsClient: Sendable {
         url.append(queryItems: [URLQueryItem(name: "ids", value: ids.joined(separator: ","))])
         return try await decoder.decode(AlternateIDsResponse.self, from: httpGet(url: url))
     }
+}
 
+extension AppleMapsClient {
     /// Makes an HTTP GET request.
     ///
     /// - Parameter url: URL for the request.
@@ -520,7 +538,7 @@ public struct AppleMapsClient: Sendable {
     /// - Throws: Error response object.
     private func httpGet(url: URL) async throws -> ByteBuffer {
         var headers = HTTPHeaders()
-        headers.add(name: "Authorization", value: "Bearer \(try await authorizationProvider.accessToken)")
+        headers.add(name: "Authorization", value: "Bearer \(try await authClient.accessToken)")
 
         var request = HTTPClientRequest(url: url.absoluteString)
         request.headers = headers
@@ -532,23 +550,5 @@ public struct AppleMapsClient: Sendable {
         } else {
             throw try await decoder.decode(ErrorResponse.self, from: response.body.collect(upTo: 1024 * 1024))
         }
-    }
-
-    /// Converts an address to a coordinate.
-    ///
-    /// - Parameter address: Address for which coordinate should be found.
-    ///
-    /// - Throws: ``AppleMapsKitError/noPlacesFound`` if no places are found.
-    ///
-    /// - Returns: A tuple representing coordinate.
-    private func getCoordinate(from address: String) async throws -> (latitude: Double, longitude: Double) {
-        let places = try await geocode(address: address)
-        guard let coordinate = places.first?.coordinate,
-            let latitude = coordinate.latitude,
-            let longitude = coordinate.longitude
-        else {
-            throw AppleMapsKitError.noPlacesFound
-        }
-        return (latitude, longitude)
     }
 }

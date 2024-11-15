@@ -282,6 +282,6 @@ struct AppleMapsKitTests {
 
     @Test("ErrorResponse.description") func errorResponseDescription() {
         let errorResponse = ErrorResponse(details: ["detail1", "detail2"], message: "message")
-        #expect(errorResponse.description == #"AppleMapsKitError(message: message, details: ["detail1", "detail2"])"#)
+        #expect(errorResponse.description == #"AppleMapsError(message: message, details: ["detail1", "detail2"])"#)
     }
 }

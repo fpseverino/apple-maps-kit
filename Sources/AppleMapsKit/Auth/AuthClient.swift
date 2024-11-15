@@ -1,5 +1,5 @@
 //
-//  AuthorizationProvider.swift
+//  AuthClient.swift
 //  apple-maps-kit
 //
 //  Created by FarouK on 11/10/2024.
@@ -10,9 +10,8 @@ import Foundation
 import JWTKit
 import NIOHTTP1
 
-actor AuthorizationProvider {
+actor AuthClient {
     private let httpClient: HTTPClient
-    private let apiServer: String
     private let teamID: String
     private let keyID: String
     private let key: String
@@ -20,9 +19,8 @@ actor AuthorizationProvider {
     private var currentToken: TokenResponse?
     private var refreshTask: Task<TokenResponse, any Error>?
 
-    init(httpClient: HTTPClient, apiServer: String, teamID: String, keyID: String, key: String) {
+    init(httpClient: HTTPClient, teamID: String, keyID: String, key: String) {
         self.httpClient = httpClient
-        self.apiServer = apiServer
         self.teamID = teamID
         self.keyID = keyID
         self.key = key
@@ -70,13 +68,13 @@ actor AuthorizationProvider {
     }
 }
 
-extension AuthorizationProvider {
+extension AuthClient {
     private var tokenResponse: TokenResponse {
         get async throws {
             var headers = HTTPHeaders()
             headers.add(name: "Authorization", value: "Bearer \(try await jwtToken)")
 
-            var request = HTTPClientRequest(url: "\(apiServer)/v1/token")
+            var request = HTTPClientRequest(url: "\(AppleMapsClient.apiServer)/v1/token")
             request.headers = headers
 
             let response = try await httpClient.execute(request, timeout: .seconds(30))
