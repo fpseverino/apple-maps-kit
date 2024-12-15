@@ -26,9 +26,10 @@ struct TokenResponse: Codable {
 }
 
 extension TokenResponse {
+    /// A boolean value that indicates if the token is valid.
+    ///
+    /// We consider a token invalid 10 seconds before it actual expiry time, so we have some time to refresh it.
     var isValid: Bool {
-        // We consider a token invalid 10 seconds before it actual expiry time,
-        // so we have some time to refresh it.
-        return Date.now < (expirationDate - 10)
+        Date.now < (expirationDate - 10)
     }
 }

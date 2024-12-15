@@ -1,10 +1,3 @@
-//
-//  AuthTests.swift
-//  apple-maps-kit
-//
-//  Created by FarouK on 12/10/2024.
-//
-
 import Foundation
 import Testing
 

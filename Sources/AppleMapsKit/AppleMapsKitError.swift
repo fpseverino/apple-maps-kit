@@ -16,7 +16,7 @@ public struct AppleMapsKitError: Error, Sendable {
         public static let invalidSearchResultType = Self(.invalidSearchResultType)
 
         public var description: String {
-            base.rawValue
+            self.base.rawValue
         }
     }
 
@@ -42,6 +42,6 @@ public struct AppleMapsKitError: Error, Sendable {
 
 extension AppleMapsKitError: CustomStringConvertible {
     public var description: String {
-        "AppleMapsKitError(errorType: \(errorType))"
+        "AppleMapsKitError(errorType: \(self.errorType))"
     }
 }

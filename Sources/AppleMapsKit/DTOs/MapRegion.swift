@@ -25,10 +25,10 @@ public struct MapRegion: Codable, Sendable {
     }
 
     var toString: String? {
-        guard let northLatitude = northLatitude,
-            let eastLongitude = eastLongitude,
-            let southLatitude = southLatitude,
-            let westLongitude = westLongitude
+        guard let northLatitude,
+            let eastLongitude,
+            let southLatitude,
+            let westLongitude
         else {
             return nil
         }

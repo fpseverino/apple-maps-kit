@@ -1,10 +1,3 @@
-//
-//  AuthClient.swift
-//  apple-maps-kit
-//
-//  Created by FarouK on 11/10/2024.
-//
-
 import AsyncHTTPClient
 import Foundation
 import JWTKit
@@ -35,7 +28,7 @@ actor AuthClient {
 
             // If we don't have a current token, we request a new one.
             guard let currentToken else {
-                return try await newToken
+                return try await self.newToken
             }
 
             if currentToken.isValid {
@@ -43,7 +36,7 @@ actor AuthClient {
             }
 
             // None of the above applies so we'll need to refresh the token.
-            return try await newToken
+            return try await self.newToken
         }
     }
 
@@ -56,13 +49,13 @@ actor AuthClient {
 
             // If we don't have a current token, we request a new one.
             let task = Task { () throws -> TokenResponse in
-                defer { refreshTask = nil }
-                let newToken = try await tokenResponse
-                currentToken = newToken
+                defer { self.refreshTask = nil }
+                let newToken = try await self.tokenResponse
+                self.currentToken = newToken
                 return newToken
             }
 
-            refreshTask = task
+            self.refreshTask = task
             return try await task.value.accessToken
         }
     }
@@ -72,7 +65,7 @@ extension AuthClient {
     private var tokenResponse: TokenResponse {
         get async throws {
             var headers = HTTPHeaders()
-            headers.add(name: "Authorization", value: "Bearer \(try await jwtToken)")
+            headers.add(name: "Authorization", value: "Bearer \(try await self.jwtToken)")
 
             var request = HTTPClientRequest(url: "\(AppleMapsClient.apiServer)/v1/token")
             request.headers = headers
