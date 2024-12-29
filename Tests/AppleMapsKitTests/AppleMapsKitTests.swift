@@ -91,14 +91,11 @@ struct AppleMapsKitTests {
     }
 
     @Test("Search with invalid Result Type") func searchWithInvalidResultType() async throws {
-        await #expect {
+        await #expect(throws: AppleMapsKitError.invalidSearchResultType) {
             try await client.search(
                 for: "eiffel tower",
                 resultTypeFilter: [.pointOfInterest, .physicalFeature, .poi, .address, .query]
             )
-        } throws: { error in
-            guard let error = error as? AppleMapsKitError else { return false }
-            return error.errorType.base == .invalidSearchResultType
         }
     }
 
