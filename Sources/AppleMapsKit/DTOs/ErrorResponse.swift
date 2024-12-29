@@ -8,12 +8,21 @@ public struct ErrorResponse: Error, Codable, Sendable {
 }
 
 extension ErrorResponse: CustomStringConvertible {
+    /// A textual representation of this error response.
     public var description: String {
         var result = #"AppleMapsError(message: \#(self.message ?? "nil")"#
 
         if let details, !details.isEmpty {
             result.append(", details: [")
-            result.append(details.joined(separator: ", "))
+
+            for (index, detail) in details.enumerated() {
+                result.append(#""\#(detail)""#)
+
+                if index < details.count - 1 {
+                    result.append(", ")
+                }
+            }
+
             result.append("]")
         }
 
