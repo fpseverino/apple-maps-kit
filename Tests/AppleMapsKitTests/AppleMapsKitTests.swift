@@ -8,7 +8,7 @@ import Testing
 struct AppleMapsKitTests {
     var client: AppleMapsClient
     // TODO: Replace with `false` when you have valid credentials.
-    var credentialsAreInvalid = true
+    let credentialsAreInvalid = true
 
     init() async throws {
         // TODO: Replace the following values with valid ones.
@@ -100,16 +100,24 @@ struct AppleMapsKitTests {
     }
 
     @Test("Search with Page Token") func searchWithPageToken() async throws {
-        await withKnownIssue {
+        try await withKnownIssue {
             let searchResponse = try await client.search(
                 for: "eiffel tower",
-                resultTypeFilter: [.pointOfInterest, .physicalFeature, .poi, .address],
-                lang: "en-US",
-                enablePagination: true,
-                pageToken: "test"
+                enablePagination: true
             )
             let results = try #require(searchResponse.results)
             #expect(!results.isEmpty)
+
+            let nextPageToken = try #require(searchResponse.paginationInfo?.nextPageToken)
+
+            let nextSearchResponse = try await client.search(
+                for: nil,
+                pageToken: nextPageToken
+            )
+            let nextResults = try #require(nextSearchResponse.results)
+            #expect(!nextResults.isEmpty)
+        } when: {
+            credentialsAreInvalid
         }
     }
 

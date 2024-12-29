@@ -12,7 +12,7 @@ public struct AppleMapsClient: Sendable {
 
     private let decoder = JSONDecoder()
 
-    /// Initializes a new `AppleMapsClient` instance.
+    /// Initializes a new ``AppleMapsClient`` instance.
     ///
     /// > Note: The Maps access token is valid for 30 minutes.
     ///
@@ -119,7 +119,7 @@ public struct AppleMapsClient: Sendable {
     ///
     /// - Returns: Returns a ``MapRegion`` that describes a region that encloses the results, and an array of ``SearchResponse`` objects that describes the results of the search.
     public func search(
-        for place: String,
+        for place: String?,
         excludePoiCategories: [PoiCategory]? = nil,
         includePoiCategories: [PoiCategory]? = nil,
         limitToCountries: [String]? = nil,
@@ -136,7 +136,10 @@ public struct AppleMapsClient: Sendable {
     ) async throws -> SearchResponse {
         var url = URL(string: "\(Self.apiServer)/v1/search")!
 
-        var queries: [URLQueryItem] = [URLQueryItem(name: "q", value: place)]
+        var queries: [URLQueryItem] = []
+        if let place {
+            queries.append(URLQueryItem(name: "q", value: place))
+        }
         if let excludePoiCategories {
             queries.append(
                 URLQueryItem(name: "excludePoiCategories", value: excludePoiCategories.map { $0.rawValue }.joined(separator: ","))
@@ -573,7 +576,7 @@ extension AppleMapsClient {
         if response.status == .ok {
             return try await response.body.collect(upTo: 1024 * 1024)
         } else {
-            throw try await self.decoder.decode(ErrorResponse.self, from: response.body.collect(upTo: 1024 * 1024))
+            throw try await self.decoder.decode(ErrorResponseJSON.self, from: response.body.collect(upTo: 1024 * 1024)).error
         }
     }
 }

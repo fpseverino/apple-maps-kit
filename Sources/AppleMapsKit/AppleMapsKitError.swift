@@ -12,7 +12,7 @@ public struct AppleMapsKitError: Error, Sendable, Equatable {
         private init(_ base: Base) {
             self.base = base
         }
-        
+
         /// No places were found for the given query.
         public static let noPlacesFound = Self(.noPlacesFound)
         /// The search result type is invalid.

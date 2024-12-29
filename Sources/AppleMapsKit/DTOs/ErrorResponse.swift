@@ -11,12 +11,18 @@ extension ErrorResponse: CustomStringConvertible {
     public var description: String {
         var result = #"AppleMapsError(message: \#(self.message ?? "nil")"#
 
-        if let details {
-            result.append(", details: \(details)")
+        if let details, !details.isEmpty {
+            result.append(", details: [")
+            result.append(details.joined(separator: ", "))
+            result.append("]")
         }
 
         result.append(")")
 
         return result
     }
+}
+
+struct ErrorResponseJSON: Codable {
+    let error: ErrorResponse
 }

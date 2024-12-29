@@ -75,7 +75,7 @@ extension AuthClient {
             if response.status == .ok {
                 return try await JSONDecoder().decode(TokenResponse.self, from: response.body.collect(upTo: 1024 * 1024))
             } else {
-                throw try await JSONDecoder().decode(ErrorResponse.self, from: response.body.collect(upTo: 1024 * 1024))
+                throw try await JSONDecoder().decode(ErrorResponseJSON.self, from: response.body.collect(upTo: 1024 * 1024)).error
             }
         }
     }
