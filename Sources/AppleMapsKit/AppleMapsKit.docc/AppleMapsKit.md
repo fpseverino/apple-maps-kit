@@ -11,7 +11,7 @@ Use this web-based service to streamline your app’s API by moving georelated s
 Use the SPM string to easily include the dependendency in your `Package.swift` file
 
 ```swift
-.package(url: "https://github.com/fpseverino/apple-maps-kit.git", from: "1.0.0-rc.1")
+.package(url: "https://github.com/fpseverino/apple-maps-kit.git", from: "1.0.0")
 ```
 
 and add it to your target's dependencies:
